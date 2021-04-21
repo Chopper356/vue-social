@@ -12,5 +12,12 @@ const setToken = (token) => {
 	console.log("Set Token");
 }
 
-export default {api, setToken}
+const signOut = () => {
+	delete api.defaults.headers.common['Authorization'];
+	localStorage.removeItem("token");
+	store.state.is_auth = false;
+	console.log("Sign Out");
+}
+
+export default {api, setToken, signOut};
 

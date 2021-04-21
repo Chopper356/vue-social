@@ -1,13 +1,17 @@
 <template>
 	<div id="app">
+		<Header></Header>
+
 		<router-view/>
 	</div>
 </template>
 
 <script>
 import http from './http';
+import Header from './components/Header';
 
 export default {
+	components: {Header},
 	created() {
 		if (localStorage.token) {
 			http.setToken(localStorage.token);
@@ -38,5 +42,16 @@ input, textarea, button, select {
 a {
 	text-decoration: none;
 	color: #2980b9;
+}
+
+.wrapper {
+	max-width: 1200px;
+	margin: auto;
+}
+
+@mixin flex () {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 </style>

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from './views/Home';
 import Auth from './views/Auth';
+import Page404 from './views/404';
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,15 @@ const routes = [
 		path: '/auth',
 		name: 'Auth',
 		component: Auth
+	},
+	{
+		path: '/404',
+		name: '404',
+		component: Page404
+	},
+	{
+		path: '*',
+		redirect: '/404',
 	},
 ]
 

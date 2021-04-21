@@ -13,9 +13,9 @@
 			<input type="password" v-model="user.password" placeholder="Password">
 			<input type="password" v-model="user.paswword2" placeholder="Repeat your password">
 
-			<div class="error" v-if="errorMsg">{{ errorMsg }}</div>
+			<button type="submit" :disabled="loading">Sign up</button>
 
-			<button type="submit">Sign up</button>
+			<div class="error" v-if="errorMsg">{{ errorMsg }}</div>
 		</form>
 		
 		<form class="auth signin" :class="{hide: mode == 'signup'}" @submit.prevent="signIn">
@@ -28,9 +28,9 @@
 			<input type="email" v-model="user.email" placeholder="Email">
 			<input type="password" v-model="user.password" placeholder="Password">
 
-			<div class="error" v-if="errorMsg">{{ errorMsg }}</div>
+			<button type="submit" :disabled="loading">Sign in</button>
 
-			<button type="submit">Sign in</button>
+			<div class="error" v-if="errorMsg">{{ errorMsg }}</div>
 		</form>
 	</div>
 </template>
@@ -49,6 +49,7 @@ export default {
 		},
 		errorMsg: "",
 		mode: "signin",
+		loading: false
 	}),
 
 	created() {
@@ -60,12 +61,14 @@ export default {
 	methods: {
 		signUp() {
 			if (this.user.password == this.user.paswword2) {
+				this.loading = true;
 				this.axios.post("http://localhost:3000/auth/signup", this.user).then(({data}) => {
 					if (!data.success) {
 						this.errorMsg = data.error;
 					} else {
 						this.$router.push({ path: '/' });
 					}
+					this.loading = false;
 				});
 			} else {
 				this.errorMsg = "Password mismatch!";
@@ -74,6 +77,7 @@ export default {
 
 		signIn() {
 			if (this.user.email && this.user.password) {
+				this.loading = true;
 				this.axios.post("http://localhost:3000/auth/signin", this.user).then(({data}) => {
 					if (!data.success) {
 						this.errorMsg = data.error;
@@ -81,6 +85,7 @@ export default {
 						http.setToken(data.token);
 						this.$router.push({ path: '/' });
 					}
+					this.loading = false;
 				});
 			} else {
 				this.errorMsg = "Invalid password or email!";
@@ -180,6 +185,10 @@ export default {
 
 			&:hover {
 				background-color: #237ebb;
+			}
+
+			&:disabled {
+				background-color: #7f8c8d !important;
 			}
 		}
 
