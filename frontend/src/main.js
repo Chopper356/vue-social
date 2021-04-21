@@ -1,13 +1,14 @@
 import Vue from 'vue';
+import VueAxios from 'vue-axios';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import axios from 'axios';
-import VueAxios from 'vue-axios';
-
-Vue.use(VueAxios, axios);
+import http from './http';
 
 Vue.config.productionTip = false;
+
+Vue.use(VueAxios, http.api);
+
 
 new Vue({
   router,

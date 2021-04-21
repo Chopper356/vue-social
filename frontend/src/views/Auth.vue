@@ -18,7 +18,7 @@
 			<button type="submit">Sign up</button>
 		</form>
 		
-		<form class="auth signin" :class="{hide: mode == 'signup'}" @submit.prevent="signUp">
+		<form class="auth signin" :class="{hide: mode == 'signup'}" @submit.prevent="signIn">
 			<div class="auth-header">
 				<a class="swap" @click="mode = 'signup'">Sign Up</a>
 				<div class="title">Sign In</div>
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import http from '../http';
 
 export default {
 	name: "Auth",
@@ -47,13 +48,19 @@ export default {
 			paswword2: ""
 		},
 		errorMsg: "",
-		mode: "signin"
+		mode: "signin",
 	}),
+
+	created() {
+		if (this.$store.state.is_auth) {
+			this.$router.push({ path: '/' });
+		}
+	},
 
 	methods: {
 		signUp() {
 			if (this.user.password == this.user.paswword2) {
-				this.axios.post("http://localhost:3000/auth", this.user).then(({data}) => {
+				this.axios.post("http://localhost:3000/auth/signup", this.user).then(({data}) => {
 					if (!data.success) {
 						this.errorMsg = data.error;
 					} else {
@@ -62,6 +69,21 @@ export default {
 				});
 			} else {
 				this.errorMsg = "Password mismatch!";
+			}
+		},
+
+		signIn() {
+			if (this.user.email && this.user.password) {
+				this.axios.post("http://localhost:3000/auth/signin", this.user).then(({data}) => {
+					if (!data.success) {
+						this.errorMsg = data.error;
+					} else {
+						http.setToken(data.token);
+						this.$router.push({ path: '/' });
+					}
+				});
+			} else {
+				this.errorMsg = "Invalid password or email!";
 			}
 		}
 	}

@@ -4,6 +4,18 @@
 	</div>
 </template>
 
+<script>
+import http from './http';
+
+export default {
+	created() {
+		if (localStorage.token) {
+			http.setToken(localStorage.token);
+		}
+	}
+}
+</script>
+
 <style lang="scss">
 body {
 	margin: 0px;
