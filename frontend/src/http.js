@@ -2,13 +2,14 @@ import axios from 'axios';
 import store from './store';
 
 let api = axios.create({
-	baseURL: "http://localhost",
+	baseURL: "http://localhost:3000/api",
 });
 
 const setToken = (token) => {
 	api.defaults.headers.common['Authorization'] = token;
 	localStorage.token = token;
 	store.state.is_auth = true;
+	store.dispatch("getUserProfile");
 	console.log("Set Token");
 }
 

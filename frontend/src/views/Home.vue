@@ -1,17 +1,17 @@
 <template>
 	<div class="wrapper home-page">
-		<div class="post">
-			<img class="avatar" src="https://avatars.githubusercontent.com/u/12010456?v=4">
+		<div class="post" v-for="(post, index) of posts" :key="index">
+			<img class="avatar" :src="post.user.avatar">
 
 			<div class="content">
 				<div class="header">
-					<div class="user">Aboba</div>
+					<div class="user">{{ post.user.name }}</div>
 					<div class="time">10ч</div>
 
 					<i class="far fa-ellipsis-h"></i>
 				</div>
 
-				<div class="message">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad velit repellat, ipsam illum odio nobis vel. Numquam eum sequi alias tempore, deleniti, laudantium eligendi quisquam minus, debitis quibusdam ad dolore.</div>
+				<div class="message" v-html="post.content"></div>
 
 				<div class="footer">
 					<i class="far fa-heart"></i> <span>568</span>
@@ -26,29 +26,42 @@
 
 <script>
 export default {
-	
+	data: () => ({
+		posts: []
+	}),
+
+	created() {
+		this.axios.get("/post/all").then(({data}) => {
+			if (data.success) {
+				this.posts = data.posts;
+			}
+		})
+	}
 }
 </script>
 
 <style lang="scss">
 	.home-page {
-		margin-top: 50px;
 		.post {
 			width: 800px;
 			margin: auto;
 			padding: 25px;
-			margin-top: 20px;
 			display: flex;
 			justify-content: space-between;
 			align-items: flex-start;
 			background-color: white;
 			box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
 			border-radius: 10px;
+			margin-bottom: 25px;
 			border: 1px solid rgba(0, 0, 0, 0.1);
 
 			i {
 				cursor: pointer;
 				font-size: 18px;
+			}
+
+			.content {
+				flex: 1;
 			}
 
 			.avatar {
@@ -83,6 +96,10 @@ export default {
 			.message {
 				margin-bottom: 10px;
 				font-size: 18px;
+
+				a {
+					font-weight: 700;
+				}
 			}
 
 			.footer {

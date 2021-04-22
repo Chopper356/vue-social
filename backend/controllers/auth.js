@@ -40,7 +40,7 @@ module.exports = {
 				return res.send({success: false, error: "Incorrect password"});
 			} 
 			
-			let token = jwt.sign({ id: user._id }, config.jwt);
+			let token = jwt.sign({ id: findUser._id }, config.jwt);
 			res.send({success: true, token});
 		}
 		catch(error) {

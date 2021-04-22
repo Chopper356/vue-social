@@ -11,9 +11,9 @@
 			<input type="text" v-model="user.name" placeholder="Name">
 			<input type="email" v-model="user.email" placeholder="Email">
 			<input type="password" v-model="user.password" placeholder="Password">
-			<input type="password" v-model="user.paswword2" placeholder="Repeat your password">
+			<input type="password" v-model="user.password2" placeholder="Repeat your password">
 
-			<button type="submit" :disabled="loading">Sign up</button>
+			<button type="submit" :disabled="loading">{{ loading ? "Processing" : "Sign in" }}</button>
 
 			<div class="error" v-if="errorMsg">{{ errorMsg }}</div>
 		</form>
@@ -28,7 +28,7 @@
 			<input type="email" v-model="user.email" placeholder="Email">
 			<input type="password" v-model="user.password" placeholder="Password">
 
-			<button type="submit" :disabled="loading">Sign in</button>
+			<button type="submit" :disabled="loading">{{ loading ? "Processing" : "Sign in" }}</button>
 
 			<div class="error" v-if="errorMsg">{{ errorMsg }}</div>
 		</form>
@@ -45,7 +45,7 @@ export default {
 			name: "",
 			email: "",
 			password: "",
-			paswword2: ""
+			password2: ""
 		},
 		errorMsg: "",
 		mode: "signin",
@@ -60,9 +60,10 @@ export default {
 
 	methods: {
 		signUp() {
-			if (this.user.password == this.user.paswword2) {
+			if (this.user.password == this.user.password2) {
 				this.loading = true;
-				this.axios.post("http://localhost:3000/auth/signup", this.user).then(({data}) => {
+				this.error = null;
+				this.axios.post("/auth/signup", this.user).then(({data}) => {
 					if (!data.success) {
 						this.errorMsg = data.error;
 					} else {
@@ -78,7 +79,8 @@ export default {
 		signIn() {
 			if (this.user.email && this.user.password) {
 				this.loading = true;
-				this.axios.post("http://localhost:3000/auth/signin", this.user).then(({data}) => {
+				this.error = null;
+				this.axios.post("/auth/signin", this.user).then(({data}) => {
 					if (!data.success) {
 						this.errorMsg = data.error;
 					} else {

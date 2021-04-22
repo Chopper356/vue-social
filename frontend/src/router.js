@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Home from './views/Home';
 import Auth from './views/Auth';
 import Page404 from './views/404';
+import CreatePost from './views/CreatePost';
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,11 @@ const routes = [
 		path: '/auth',
 		name: 'Auth',
 		component: Auth
+	},
+	{
+		path: '/create',
+		name: 'CreatePost',
+		component: CreatePost
 	},
 	{
 		path: '/404',

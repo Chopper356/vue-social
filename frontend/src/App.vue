@@ -54,4 +54,14 @@ a {
 	align-items: center;
 	justify-content: space-between;
 }
+
+.pages-enter-active, .pages-leave-active {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	transition: all .5s;
+}
+.pages-enter, .pages-leave-to {
+	left: -100%;
+}
 </style>

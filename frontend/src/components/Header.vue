@@ -1,7 +1,7 @@
 <template>
 	<div class="header">
 		<div class="wrapper">
-			<div class="logo">TypeCode</div>
+			<router-link to="/" class="logo">TypeCode</router-link>
 		
 			<div class="menu">
 				<router-link to="/">Home</router-link>
@@ -11,9 +11,9 @@
 			<div class="profile">
 				<template v-if="$store.state.is_auth">
 					<div class="user">
-						<div class="create"><i class="fas fa-plus"></i> <span>Create post</span></div>
-						<img src="https://avatars.githubusercontent.com/u/12010456?v=4">
-						<div class="name">Aboba</div>
+						<router-link to="./create" class="create"><i class="fas fa-plus"></i> <span>Create post</span></router-link>
+						<img :src="$store.state.user.avatar">
+						<div class="name">{{ $store.state.user.name }}</div>
 					</div>
 
 					<button @click="signOut">Sign out</button>
@@ -28,6 +28,14 @@
 import http from '../http';
 
 export default {
+	data: () => ({
+		name: "",
+	}),
+
+	created() {
+		
+	},
+
 	methods: {
 		signOut() {
 			http.signOut();
@@ -41,11 +49,12 @@ export default {
 
 <style lang="scss">
 	#app > .header {
-		padding: 10px 10px;
+		padding: 15px 10px;
 		box-shadow: 0px 0px 30px rgba(75, 102, 121, 0.2);
 		color: #333;
 		background-color: white;
 		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		margin-bottom: 70px;
 		
 		.wrapper {
 			display: flex;
@@ -55,7 +64,12 @@ export default {
 			.logo {
 				font-size: 32px;
 				color: #2980b9;
-				font-weight: 600;
+				font-weight: 700;
+				// transition: 0.5s;
+
+				// &:hover {
+				// 	filter: drop-shadow(0px 5px 15px #297fb9c9);
+				// }
 			}
 
 			.menu {
