@@ -4,6 +4,8 @@ import Home from './views/Home';
 import Auth from './views/Auth';
 import Page404 from './views/404';
 import CreatePost from './views/CreatePost';
+import Profile from './views/Profile';
+import Users from './views/Users';
 
 Vue.use(VueRouter)
 
@@ -22,6 +24,16 @@ const routes = [
 		path: '/create',
 		name: 'CreatePost',
 		component: CreatePost
+	},
+	{
+		path: '/profile/:id',
+		name: 'Profile',
+		component: Profile
+	},
+	{
+		path: '/users',
+		name: 'Users',
+		component: Users
 	},
 	{
 		path: '/404',

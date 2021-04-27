@@ -12,8 +12,8 @@
 				<template v-if="$store.state.is_auth">
 					<div class="user">
 						<router-link to="./create" class="create"><i class="fas fa-plus"></i> <span>Create post</span></router-link>
-						<img :src="$store.state.user.avatar">
-						<div class="name">{{ $store.state.user.name }}</div>
+						<router-link tag="img" :to="/profile/ + $store.state.user._id" :src="$store.state.user.avatar"></router-link>
+						<router-link :to="/profile/ + $store.state.user._id" class="name">{{ $store.state.user.name }}</router-link>
 					</div>
 
 					<button @click="signOut">Sign out</button>

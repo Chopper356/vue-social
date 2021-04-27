@@ -20,6 +20,14 @@ const UserSchema = new mongoose.Schema({
 	date_create: {
 		type: Date,
 		default: new Date()
+	},
+	about_me: {
+		type: String,
+		default: "Unfortunately, there is nothing here yet :("
+	},
+	user_status: {
+		type: Boolean,
+		default: false
 	}
 }, {
 	versionKey: false
