@@ -54,7 +54,6 @@ export default {
 
 <style lang="scss">
 	.search {
-		margin-left: 20px;
 		outline: none;
 		border: 1px solid rgba(0, 0, 0, 0.1);
 		padding: 10px;
@@ -64,6 +63,8 @@ export default {
 		border-radius: 5px;
 		width: 400px;
 		transition: all 0.5s;
+		display: block;
+		margin: auto;
 
 		&:focus {
 			transform: scale(1.05);
@@ -71,9 +72,8 @@ export default {
 	}
 
 	.users {
-		display: flex;
-		flex-wrap: wrap;
-
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
 		.user {
 			width: 350px;
 			background-color: white;
@@ -81,7 +81,7 @@ export default {
 			box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
 			border: 1px solid rgba(0, 0, 0, 0.1);
 			border-radius: 10px;
-			margin: 20px;
+			margin: auto;
 			margin-top: 30px;
 			transition: all 0.5s;
 
@@ -137,7 +137,8 @@ export default {
 				padding-top: 20px;
 
 				i {
-					padding: 5px;
+					padding: 10px;
+					font-size: 14px;
 					border-radius: 5px;
 					margin-left: 10px;
 					cursor: pointer;

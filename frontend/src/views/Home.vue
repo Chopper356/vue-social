@@ -1,36 +1,22 @@
 <template>
-	<div class="wrapper home-page">
-		<div class="post" v-for="(post, index) of posts" :key="index">
-			<img class="avatar" :src="post.user.avatar">
-
-			<div class="content">
-				<div class="header">
-					<div class="user">{{ post.user.name }}</div>
-					<div class="time">10ч</div>
-
-					<i class="far fa-ellipsis-h"></i>
-				</div>
-
-				<div class="message" v-html="post.content"></div>
-
-				<div class="footer">
-					<i class="far fa-heart"></i> <span>568</span>
-					<!-- <i class="fas fa-heart"></i> -->
-
-					<i class="far fa-comment"></i> <span>34</span>
-				</div>
-			</div>
-		</div>
+	<div class="wrapper posts-page">
+		<Comments v-show="$store.state.post_opened"></Comments>
+		<Post v-for="(post, index) of posts" :key="index" :post="post"></Post>
 	</div>
 </template>
 
 <script>
+import Comments from '../components/Comments.vue';
+import Post from '../components/Post';
 export default {
+	components: {Comments, Post},
+
 	data: () => ({
 		posts: []
 	}),
 
 	created() {
+		this.$store.state.post_opened = null;
 		this.axios.get("/post/all").then(({data}) => {
 			if (data.success) {
 				this.posts = data.posts;
@@ -41,82 +27,18 @@ export default {
 </script>
 
 <style lang="scss">
-	.home-page {
-		.post {
-			width: 800px;
-			margin: auto;
-			padding: 25px;
-			display: flex;
-			justify-content: space-between;
-			align-items: flex-start;
-			background-color: white;
-			box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
-			border-radius: 10px;
-			margin-bottom: 25px;
-			border: 1px solid rgba(0, 0, 0, 0.1);
+	.show-comments {
+		display: flex;
+		opacity: 1;
+	}
 
-			i {
-				cursor: pointer;
-				font-size: 18px;
-			}
-
-			.content {
-				flex: 1;
-			}
-
-			.avatar {
-				width: 75px;
-				height: 75px;
-				object-fit: cover;
-				border-radius: 5px;
-				margin-right: 20px;
-			}
-
-			.header {
-				box-shadow: none;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				padding: 0;
-
-				.time {
-					flex: 1;
-					margin-left: 20px;
-					color: rgba(0, 0, 0, 0.5);
-					font-weight: 600;
-				}
-
-				.user {
-					font-weight: 600;
-					color: #535858;
-					font-size: 24px;
-				}
-			}
-
-			.message {
-				margin-bottom: 10px;
-				font-size: 18px;
-
-				a {
-					font-weight: 700;
-				}
-			}
-
-			.footer {
-				opacity: 0.5;
-				transition: all 0.5s;
-				i {
-					margin-left: 30px;
-
-					&:first-child {
-						margin-left: 0px;
-					}
-				}
-
-				&:hover {
-					opacity: 1;
-				}
-			}
+	.posts-page {
+		& > .title {
+			color: #2c3e50;
+			font-size: 30px;
+			text-align: center;
+			margin: 30px 0px;
+			font-weight: 600;
 		}
 	}
 </style>

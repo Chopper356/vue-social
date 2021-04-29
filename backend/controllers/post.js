@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const Comment = require("../models/comment");
 
 module.exports = {
 	async create(req, res) {
@@ -19,7 +20,12 @@ module.exports = {
 
 	async getAll(req, res) {
 		try {
-			let posts = await Post.find({}).populate("user");
+			let posts = await Post.find({}).populate("user").lean();
+			
+			for(let post of posts) {
+				post.comments = await Comment.countDocuments({post: post._id});
+			}
+
 			res.send({success: true, posts});
 		}
 		catch(err) {

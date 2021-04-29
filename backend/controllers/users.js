@@ -1,5 +1,4 @@
 const User = require('../models/user');
-const { search } = require('../routes');
 
 module.exports = {
 	async show(req, res) {

@@ -22,28 +22,29 @@
 				</div>
 			</div>
 
-			<div class="users-comments">
-				<div class="title">Comments:</div>
+		</div>
 
-				<div class="comment">
-					<img class="avatar" src="https://avatars.githubusercontent.com/u/12010456?v=4">
+		<div class="posts-page">
+			<div class="title">Posts:</div>
 
-					<div class="content">
-						<div class="header">
-							<router-link to="/profile/608207ef2089182fd82c65b2" class="user">Chrom</router-link>
-							<div class="time">10ч</div>
+			<div class="post-component">
+				<img class="avatar" src="https://avatars.githubusercontent.com/u/12010456?v=4">
 
-							<i class="far fa-ellipsis-h"></i>
-						</div>
+				<div class="content">
+					<div class="header">
+						<router-link to="/profile/608207ef2089182fd82c65b2" class="user">Chrom</router-link>
+						<div class="time">10ч</div>
 
-						<div class="message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa officiis quasi quia at tempore, expedita quo mollitia facilis assumenda, placeat excepturi. Dolorem, voluptatibus laborum impedit sunt tenetur eius et eveniet.</div>
+						<i class="far fa-ellipsis-h"></i>
+					</div>
 
-						<div class="footer">
-							<i class="far fa-heart"></i> <span>568</span>
-							<!-- <i class="fas fa-heart"></i> -->
+					<div class="message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa officiis quasi quia at tempore, expedita quo mollitia facilis assumenda, placeat excepturi. Dolorem, voluptatibus laborum impedit sunt tenetur eius et eveniet.</div>
 
-							<i class="far fa-comment"></i> <span>34</span>
-						</div>
+					<div class="footer">
+						<i class="far fa-heart"></i> <span>568</span>
+						<!-- <i class="fas fa-heart"></i> -->
+
+						<i class="far fa-comment"></i> <span>34</span>
 					</div>
 				</div>
 			</div>
@@ -56,7 +57,6 @@ export default {
 	data: () => ({
 	}),
 	created() {
-		console.log("qweqweqwe")
 		this.$store.dispatch('openProfile', this.$route.params.id);
 	},
 
@@ -122,9 +122,10 @@ export default {
 					color: white;
 
 					i {
-						padding: 5px;
+						padding: 10px;
 						border-radius: 5px;
 						margin-left: 10px;
+						font-size: 14px;
 						cursor: pointer;
 						transition: all 0.5s;
 
@@ -167,95 +168,6 @@ export default {
 			.about {
 				font-size: 18px;
 				margin-top: 10px;
-			}
-		}
-
-		.users-comments {
-			width: 100%;
-			margin-top: 40px;
-			opacity: 0.5;
-			transition: all 0.5s;
-
-			&:hover {
-				opacity: 1;
-			}
-
-			.title {
-				font-size: 26px;
-				color: #2c3e50;
-				text-align: center;
-				font-weight: 600;
-			}
-
-			.comment {
-				display: flex;
-				justify-content: space-between;
-				align-items: flex-start;
-				margin-bottom: 25px;
-				margin-top: 20px;
-
-				i {
-					cursor: pointer;
-					font-size: 18px;
-				}
-
-				.content {
-					flex: 1;
-				}
-
-				.avatar {
-					width: 60px;
-					height: 60px;
-					object-fit: cover;
-					border-radius: 5px;
-					margin-right: 20px;
-				}
-
-				.header {
-					box-shadow: none;
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-					padding: 0;
-
-					.time {
-						flex: 1;
-						margin-left: 20px;
-						color: rgba(0, 0, 0, 0.5);
-						font-weight: 600;
-					}
-
-					.user {
-						font-weight: 600;
-						color: #535858;
-						font-size: 18px;
-					}
-				}
-
-				.message {
-					margin-bottom: 10px;
-					font-size: 16px;
-
-					a {
-						font-weight: 700;
-					}
-				}
-
-				.footer {
-					opacity: 0.5;
-					transition: all 0.5s;
-					i {
-						margin-left: 30px;
-
-						&:first-child {
-							margin-left: 0px;
-						}
-					}
-
-					&:hover {
-						opacity: 1;
-					}
-				}
 			}
 		}
 	}

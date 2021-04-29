@@ -9,6 +9,8 @@ export default new Vuex.Store({
 	state: {
 		is_auth: false,
 		user: {},
+		post_opened: null,
+		comments: [],
 		profile: {}
 	},
 	mutations: {
