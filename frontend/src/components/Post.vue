@@ -13,8 +13,7 @@
 			<div class="message" v-html="post.content"></div>
 
 			<div class="footer">
-				<i class="far fa-heart"></i> <span>568</span>
-				<!-- <i class="fas fa-heart"></i> -->
+				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post)"></i><span>{{ post.likes.length }}</span>
 
 				<i class="far fa-comment" @click="showComments(post)"></i> <span>{{ post.comments || 0 }}</span>
 			</div>
@@ -26,9 +25,28 @@
 export default {
 	props: ["post"],
 
+	data: () => ({
+		liked: false
+	}),
+
+	created() {
+		if (this.$store.state.is_auth) {
+			this.liked = this.post.likes.includes(this.$store.state.user._id);
+		}
+	},
+
 	methods: {
 		showComments(post) {
 			this.$store.state.post_opened = post;
+		},
+		addLike(post) {
+			this.axios.post("/post/like", {id: post._id, liked: !this.liked}).then(({data}) => {
+				if (data.success) {
+					this.liked = !this.liked;
+
+					this.$emit("liked", this.liked);
+				}
+			})
 		}
 	}
 }
@@ -97,19 +115,28 @@ export default {
 		}
 
 		.footer {
-			opacity: 0.5;
-			transition: all 0.5s;
 			i {
+				opacity: 0.5;
+				transition: all 0.5s;
 				margin-left: 30px;
 
 				&:first-child {
 					margin-left: 0px;
 				}
+				&:hover {
+					opacity: 1;
+				}
+				&.fas {
+					opacity: 1;
+					color: #e74c3c;
+				}
 			}
 
-			&:hover {
-				opacity: 1;
+			span {
+				margin-left: 5px;
+				user-select: none;
 			}
+
 		}
 	}
 </style>

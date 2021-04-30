@@ -24,6 +24,7 @@ module.exports = {
 			
 			for(let post of posts) {
 				post.comments = await Comment.countDocuments({post: post._id});
+				// post.likes = post.likes.length;
 			}
 
 			res.send({success: true, posts});
@@ -31,6 +32,26 @@ module.exports = {
 		catch(err) {
 			console.log(err)
 			res.send({success: false, error: "Post loading error!"});
+		}
+	},
+	async like(req, res) {
+		try {
+			if (req.body.liked) {
+				await Post.updateOne({_id: req.body.id}, {
+					$push: {likes: req.user}
+				})
+			}
+			else {
+				await Post.updateOne({_id: req.body.id}, {
+					$pull: {likes: req.user}
+				})
+			}
+
+			res.send({success: true});
+		}
+		catch(err) {
+			console.log(err)
+			res.send({success: false, error: "Like added error!"});
 		}
 	}
 }
