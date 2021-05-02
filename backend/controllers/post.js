@@ -20,11 +20,9 @@ module.exports = {
 
 	async getAll(req, res) {
 		try {
-			let posts = await Post.find({}).populate("user").lean();
-			
+			let posts = await Post.find({}).populate("user").populate("likes", "name avatar _id").lean();
 			for(let post of posts) {
 				post.comments = await Comment.countDocuments({post: post._id});
-				// post.likes = post.likes.length;
 			}
 
 			res.send({success: true, posts});

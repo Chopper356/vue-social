@@ -9,7 +9,7 @@ module.exports = {
 			let user = req.body;
 
 			let findUser = await User.findOne({email: user.email});
-			let saltRounds = 16;
+			let saltRounds = 8;
 
 			if (!findUser) {
 				user.password = await bcrypt.hash(user.password, saltRounds);

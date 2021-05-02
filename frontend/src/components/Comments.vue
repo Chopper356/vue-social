@@ -58,6 +58,7 @@ export default {
 			this.axios.post("/comment/create", {text: this.text, post_id: this.$store.state.post_opened._id}).then(({data}) => {
 				if (data.success) {
 					this.comments.unshift(data.comment);
+					this.$emit("created");
 
 					this.text = "";
 				}

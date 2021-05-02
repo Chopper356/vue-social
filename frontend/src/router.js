@@ -5,6 +5,7 @@ import Auth from './views/Auth';
 import Page404 from './views/404';
 import CreatePost from './views/CreatePost';
 import Profile from './views/Profile';
+import ProfileEdit from './views/ProfileEdit';
 import Users from './views/Users';
 
 Vue.use(VueRouter)
@@ -29,6 +30,11 @@ const routes = [
 		path: '/profile/:id',
 		name: 'Profile',
 		component: Profile
+	},
+	{
+		path: '/profile/edit/:id',
+		name: 'ProfileEdit',
+		component: ProfileEdit
 	},
 	{
 		path: '/users',

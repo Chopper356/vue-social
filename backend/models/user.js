@@ -25,9 +25,16 @@ const UserSchema = new mongoose.Schema({
 		type: String,
 		default: "Unfortunately, there is nothing here yet :("
 	},
-	user_status: {
+	friends: [{
+		type: mongoose.Types.ObjectId,
+		ref: "user"
+	}],
+	online: {
 		type: Boolean,
 		default: false
+	},
+	status: {
+		type: String,
 	}
 }, {
 	versionKey: false

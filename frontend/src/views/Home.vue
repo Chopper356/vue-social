@@ -1,6 +1,6 @@
 <template>
 	<div class="wrapper posts-page">
-		<Comments v-show="$store.state.post_opened"></Comments>
+		<Comments @created="addComment" v-show="$store.state.post_opened"></Comments>
 		<Post @liked="liked(post, $event)" v-for="(post, index) of posts" :key="index" :post="post"></Post>
 	</div>
 </template>
@@ -26,12 +26,21 @@ export default {
 
 	methods: {
 		liked(post, liked) {
+			console.log(post)
 			if (liked) {
-				post.likes.push(this.$store.state.user._id);
+				post.likes.push(this.$store.state.user);
 			}
 			else {
 				let index = post.likes.indexOf(this.$store.state.user._id);
 				post.likes.splice(index, 1);
+			}
+		},
+
+		addComment() {
+			for(let post of this.posts) {
+				if (post._id == this.$store.state.post_opened._id) {
+					post.comments += 1;
+				}
 			}
 		}
 	}

@@ -3,22 +3,22 @@
 		<div class="user-info">
 			<div class="info">
 				<div class="left-block">
-					<div class="avatar"><img :src="$store.state.profile.avatar"></div>
-					<div class="status" :class="{'online': $store.state.profile.user_status}">{{ $store.state.profile.user_status ? "Online" : "Offline" }}</div>
+					<div class="avatar"><img :src="profile.avatar"></div>
+					<div class="activity" :class="{'online': profile.online}">{{ profile.online ? "Online" : "Offline" }}</div>
 				</div>
 
 				<div class="right-block">
 					<div class="top">
-						<div class="name">{{ $store.state.profile.name }}</div>
+						<div class="name">{{ profile.name }}</div>
 						<div class="controlls">
-							<i class="fas fa-user-plus bg-add"></i>
-							<i class="fas fa-user-minus bg-delete"></i>
-							<i class="fas fa-paper-plane bg-msg"></i>
-							<i class="fas fa-pencil-alt bg-change"></i>
+							<i v-if="!is_friend && profile._id != $store.state.user._id" class="fas fa-user-plus bg-add" @click="friendAdd"></i>
+							<i v-else-if="profile._id != $store.state.user._id" class="fas fa-user-minus bg-delete" @click="friendAdd"></i>
+							<i v-if="profile._id != $store.state.user._id" class="fas fa-paper-plane bg-msg"></i>
+							<router-link :to="'/profile/edit/' + $store.state.user._id"><i v-if="profile._id == $store.state.user._id" class="fas fa-pencil-alt bg-change"></i></router-link>
 						</div>
 					</div>
 
-					<div class="about">{{ $store.state.profile.about_me }}</div>
+					<div class="about">{{ profile.about_me }}</div>
 				</div>
 			</div>
 
@@ -55,15 +55,45 @@
 <script>
 export default {
 	data: () => ({
+		is_friend: false,
+		profile: {}
 	}),
-	created() {
-		this.$store.dispatch('openProfile', this.$route.params.id);
+	mounted() {
+		let user_id = this.$route.params.id;
+		this.axios.get(`/profile/${user_id}`).then(({data}) => {
+			if (data.success) {
+				this.profile = data.user;
+				
+				if (data.user._id != user_id) {
+					this.$router.push({ path: `/profile/${data.user._id}` });
+				}
+			}
+		})
+	},
+
+	methods: {
+		friendAdd() {
+			this.axios.post("/profile/friendadd", {id: this.profile._id, add: !this.is_friend}).then(({data}) => {
+				if (data.success) {
+					this.is_friend = !this.is_friend;
+				}
+			})
+		},
 	},
 
 	watch: {
 		$route(to, from) {
 			if (to.params.id != from.params.id) {
 				this.$store.dispatch('openProfile', this.$route.params.id);
+			}
+		},
+		"$store.state.profile"(newVal) {
+			if (newVal) {
+				if (this.$store.state.is_auth) {
+					for(let user of this.profile.friends) {
+						(user == this.$store.state.user._id) ? this.is_friend = true: this.is_friend = false;
+					}
+				}
 			}
 		}
 	}
@@ -94,7 +124,7 @@ export default {
 		.left-block {
 			margin-right: 20px;
 
-			.status {
+			.activity {
 				color: #535858;
 				font-weight: 600;
 				font-size: 18px;
@@ -120,6 +150,10 @@ export default {
 
 				.controlls {
 					color: white;
+
+					a {
+						color: white;
+					}
 
 					i {
 						padding: 10px;

@@ -1,25 +1,27 @@
 <template>
 	<div class="wrapper">
-		<input @input="search" v-model="text" class="search" type="text" placeholder="Input user name">
+		<input v-model="search" class="search" type="text" placeholder="Input user name">
 
 		<div class="users">
-			<div class="user" v-for="(user, index) of new_users" :key="index">
+			<div class="user" v-for="(user, index) of filteredUsers" :key="index">
 				<router-link :to="/profile/ + user._id" class="content">
 					<img src="https://avatars.githubusercontent.com/u/12010456?v=4" alt="">
 
 					<div class="info">
 						<div class="top">
 							<span class="name">{{ user.name }}</span>
-							<span class="status" :class="{'online': user.user_status}">{{ user.user_status ? "Online" : "Offline" }}</span>
 						</div>
 						<div class="about">{{ user.about_me }}</div>
 					</div>
 				</router-link>
 
 				<div class="bottom">
-					<i class="fas fa-user-plus bg-add"></i>
-					<i class="fas fa-user-minus bg-delete"></i>
-					<i class="fas fa-paper-plane bg-msg"></i>
+					<template v-if="$store.state.user._id != user._id">
+						<i v-if="!user.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(user)"></i>
+						<i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(user)"></i>
+						<i class="fas fa-paper-plane bg-msg"></i>
+					</template>
+					<div v-else class="you">It's you!</div>
 				</div>
 			</div>
 		</div>
@@ -29,24 +31,63 @@
 <script>
 export default {
 	data: () => ({
-		new_users: [],
-		old_users: [],
-		text: null
+		users: [],
+		search: ""
 	}),
 
 	created() {
 		this.axios.get("/users").then(({data}) => {
 			if (data.success) {
-				this.new_users = data.users;
-				this.old_users = data.users;
+				data.users.forEach(u => u.is_friend = false);
+				this.users = data.users;
+				this.checkFriends();
 			}
 		})
+
+	},
+
+	computed: {
+		filteredUsers() {
+			if (this.search) {
+				return this.users.filter(item => item.name.indexOf(this.search) !== -1);
+			}
+			else {
+				return this.users;
+			}
+		}
 	},
 
 	methods: {
-		search() {
-			this.new_users = this.old_users;
-			this.new_users = this.new_users.filter(item => item.name.indexOf(this.text) !== -1);
+		checkFriends() {
+			if (this.$store.state.is_auth && this.users) {
+				for(let user of this.users) {
+					(this.$store.state.user.friends.includes(user._id)) ? user.is_friend = true : user.is_friend = false;
+				}
+			}
+		},
+
+		friendAdd(user) {
+			this.axios.post("/profile/friendadd", {id: user._id, add: !user.is_friend}).then(({data}) => {
+				if (data.success) {
+					user.is_friend = !user.is_friend;
+
+					if (user.is_friend) {
+						this.$store.state.user.friends.push(user._id);
+					}
+					else {
+						let idx = this.$store.state.user.friends.indexOf(user._id);
+						this.$store.state.user.friends.splice(idx, 1);
+					}
+				}
+			})
+		}
+	},
+
+	watch: {
+		"$store.state.profile"(newVal) {
+			if (newVal) {
+				this.checkFriends();
+			}
 		}
 	}
 }
@@ -101,13 +142,13 @@ export default {
 				display: flex;
 
 				.name {
-					font-size: 24px;
+					font-size: 22px;
 					color: #535858;
 					font-weight: 600;
 					margin-right: 10px;
 				}
 
-				.status {
+				.activity {
 					color: #535858;
 					font-weight: 600;
 					font-size: 18px;
@@ -147,6 +188,12 @@ export default {
 					&:hover {
 						transform: scale(1.2);
 					}
+				}
+
+				.you {
+					font-size: 18px;
+					color: #535858;
+					opacity: 0.6;
 				}
 
 				.bg-msg {
