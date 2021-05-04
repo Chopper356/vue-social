@@ -11,20 +11,20 @@
 						<div class="name">{{ profile.name }}</div>
 						<div v-if="profile.status" class="status">#{{ profile.status }}</div>
 						<div class="controlls">
-							<i v-if="!is_friend && profile._id != $store.state.user._id" class="fas fa-user-plus bg-add" @click="friendAdd"></i>
-							<i v-else-if="profile._id != $store.state.user._id" class="fas fa-user-minus bg-delete" @click="friendAdd"></i>
-							<i v-if="profile._id != $store.state.user._id" class="fas fa-paper-plane bg-msg"></i>
+							<!-- <i v-if="!is_friend && profile._id != $store.state.user._id" class="fas fa-user-plus bg-add" @click="friendAdd"></i> -->
+							<!-- <i v-else-if="profile._id != $store.state.user._id" class="fas fa-user-minus bg-delete" @click="friendAdd"></i> -->
+							<!-- <i v-if="profile._id != $store.state.user._id" class="fas fa-paper-plane bg-msg"></i> -->
 							<router-link :to="'/profile/edit/' + $store.state.user._id"><i v-if="profile._id == $store.state.user._id" class="fas fa-pencil-alt bg-change"></i></router-link>
 						</div>
 					</div>
 
-					<div class="about">{{ profile.about_me }}</div>
+					<div class="about" v-html="profile.about_me"></div>
 				</div>
 			</div>
 
 		</div>
 
-		<div class="posts-page">
+		<!-- <div class="posts-page">
 			<div class="title">Posts:</div>
 
 			<div class="post-component">
@@ -42,13 +42,12 @@
 
 					<div class="footer">
 						<i class="far fa-heart"></i> <span>568</span>
-						<!-- <i class="fas fa-heart"></i> -->
 
 						<i class="far fa-comment"></i> <span>34</span>
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>	
 </template>
 
@@ -59,19 +58,23 @@ export default {
 		profile: {}
 	}),
 	mounted() {
-		let user_id = this.$route.params.id;
-		this.axios.get(`/profile/${user_id}`).then(({data}) => {
-			if (data.success) {
-				this.profile = data.user;
-				
-				if (data.user._id != user_id) {
-					this.$router.push({ path: `/profile/${data.user._id}` });
-				}
-			}
-		})
+		this.routeProfile();
 	},
 
 	methods: {
+		routeProfile() {
+			let user_id = this.$route.params.id;
+			this.axios.get(`/profile/${user_id}`).then(({data}) => {
+				if (data.success) {
+					this.profile = data.user;
+					
+					if (data.user._id != user_id) {
+						this.$router.push({ path: `/profile/${data.user._id}` });
+					}
+				}
+			})
+		},
+
 		friendAdd() {
 			this.axios.post("/profile/friendadd", {id: this.profile._id, add: !this.is_friend}).then(({data}) => {
 				if (data.success) {
@@ -84,7 +87,7 @@ export default {
 	watch: {
 		$route(to, from) {
 			if (to.params.id != from.params.id) {
-				this.$store.dispatch('openProfile', this.$route.params.id);
+				this.routeProfile();
 			}
 		},
 		"$store.state.profile"(newVal) {

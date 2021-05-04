@@ -44,6 +44,10 @@ a {
 	color: #2980b9;
 }
 
+#app {
+	padding-bottom: 80px;
+}
+
 .wrapper {
 	max-width: 1200px;
 	margin: auto;

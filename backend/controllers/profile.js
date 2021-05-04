@@ -31,10 +31,13 @@ module.exports = {
 			}
 
 			let user = req.body;
+			let about_me = req.body.about_me.replace(/\n{2,}/gi, "<br><br>");
+				about_me = about_me.replace(/\n/, "<br>");
+			
 			let set = {
 				name: user.name,
-				about_me: user.about_me,
-				status: user.status
+				status: user.status,
+				about_me
 			}
 
 			if (req.files) {
@@ -65,7 +68,7 @@ module.exports = {
 		try {
 			if (req.body.add) {
 				await User.updateOne({_id: req.user}, {
-					$push: {friends: req.body.id}
+					$addToSet: {friends: req.body.id}
 				});
 			}
 			else {

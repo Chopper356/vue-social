@@ -18,8 +18,8 @@
 
 				<div class="bottom">
 					<template v-if="$store.state.user._id != user._id">
-						<i v-if="!user.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(user)"></i>
-						<i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(user)"></i>
+						<!-- <i v-if="!user.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(user)"></i> -->
+						<!-- <i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(user)"></i> -->
 						<!-- <i class="fas fa-paper-plane bg-msg"></i> -->
 					</template>
 					<div v-else class="you">It's you!</div>

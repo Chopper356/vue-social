@@ -4,10 +4,8 @@
 			<textarea maxlength="400" placeholder="Do you have some new? :)" v-model="text"></textarea>
 
 			<div class="bottom">
-				
-
 				<span @click="$refs.upload_img.click()" class="upload">
-					<input @change="checkSize" type="file" ref="upload_img"	 hidden>
+					<input @change="checkSize" type="file" accept=".png, .jpg, .jpeg, .gif" ref="upload_img" hidden>
 					<i class="fad fa-upload"></i> Upload image</span>
 				<span>{{ text.length }} / 400</span> <button @click="createPost">Submit</button>
 			</div>

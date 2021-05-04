@@ -5,7 +5,7 @@
 				<div class="left-block">
 					<div class="avatar"><img :src="$store.state.user.avatar"><div v-show="image_error" class="img-err">Avatar size <br> > 5MB</div></div>
 					<div class="upload" @click="$refs.upload_input.click()">
-						<input @change="checkSize" type="file" hidden ref="upload_input">
+						<input @change="checkSize" type="file" accept=".png, .jpg, .jpeg, .gif" hidden ref="upload_input">
 						<i class="fad fa-upload"></i>
 						<span>Avatar</span>
 					</div>
