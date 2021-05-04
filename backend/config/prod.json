@@ -1,4 +1,0 @@
-{
-	"port": 10000,
-	"mongo": "mongodb://localhost/chopper-social"
-}

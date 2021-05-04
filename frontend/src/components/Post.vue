@@ -11,6 +11,7 @@
 			</div>
 
 			<div class="message" v-html="post.content"></div>
+			<img v-if="post.images" class="img-content" :src="post.images">
 
 			<div class="footer">
 				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i><span @click="show_users = !show_users">{{ post.likes.length }} <span class="text">Likes</span></span>
@@ -65,7 +66,7 @@ export default {
 
 <style lang="scss">
 	.post-component {
-		width: 800px;
+		width: 700px;
 		margin: auto;
 		padding: 25px;
 		display: flex;
@@ -85,6 +86,13 @@ export default {
 
 		.content {
 			flex: 1;
+		}
+
+		.img-content {
+			max-height: 250px;
+			max-width: 250px;
+			border-radius: 5px;
+			margin-bottom: 10px;
 		}
 
 		.avatar {

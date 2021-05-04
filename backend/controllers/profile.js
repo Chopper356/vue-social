@@ -1,4 +1,7 @@
 const User = require('../models/user');
+const imgbbUploader = require("imgbb-uploader");
+const config = require('../config/dev.json');
+const sharp = require('sharp');
 
 module.exports = {
 	async getUserProfile(req, res) {
@@ -13,7 +16,7 @@ module.exports = {
 
 	async getOpenProfile(req, res) {
 		try {
-			let user = await User.findOne({_id: req.params.id}, "name avatar _id about_me user_status friends");
+			let user = await User.findOne({_id: req.params.id}, {password: 0});
 			res.send({success: true, user});
 		}
 		catch(error) {
@@ -27,18 +30,37 @@ module.exports = {
 				return res.send({success: false, error: "Access denied!"});
 			}
 
-			let user = req.body.user;
-			await User.updateOne({_id: req.params.id}, {
-				$set: {
-					name: user.name,
-					about_me: user.about_me,
-					status: user.status
+			// let file = await sharp(req.files.avatar.data).resize(300, 200).toBuffer();
+			// console.log(file);
+			let user = req.body;
+			let set = {
+				name: user.name,
+				about_me: user.about_me,
+				status: user.status
+			}
+
+			if (req.files) {
+				let buffer_base64 = req.files.avatar.data.toString("base64");
+				let options = {
+					apiKey: config.imgbb_api,
+					base64string: buffer_base64
 				}
+
+				let avatar = await imgbbUploader(options);
+
+				set.avatar = avatar.image.url;
+			}
+
+			await User.updateOne({_id: req.params.id}, {
+				$set: set
 			});
+
+			console.log(req.body)
 			
 			res.send({success: true});
 		}
 		catch(error) {
+			console.log(error)
 			res.send({success: false, error: "Database error!"});
 		}
 	},

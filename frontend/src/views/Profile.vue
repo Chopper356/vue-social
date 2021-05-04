@@ -4,12 +4,12 @@
 			<div class="info">
 				<div class="left-block">
 					<div class="avatar"><img :src="profile.avatar"></div>
-					<div class="activity" :class="{'online': profile.online}">{{ profile.online ? "Online" : "Offline" }}</div>
 				</div>
 
 				<div class="right-block">
 					<div class="top">
 						<div class="name">{{ profile.name }}</div>
+						<div class="status">#{{ profile.status }}</div>
 						<div class="controlls">
 							<i v-if="!is_friend && profile._id != $store.state.user._id" class="fas fa-user-plus bg-add" @click="friendAdd"></i>
 							<i v-else-if="profile._id != $store.state.user._id" class="fas fa-user-minus bg-delete" @click="friendAdd"></i>
@@ -115,6 +115,7 @@ export default {
 			width: 120px;
 			object-fit: cover;
 			border-radius: 5px;
+			display: block;
 		}
 
 		.info {
@@ -146,6 +147,15 @@ export default {
 					font-size: 24px;
 					color: #535858;
 					font-weight: 600;
+				}
+
+				.status {
+					flex: 1;
+					margin-left: 20px;
+					position: relative;
+					top: 3px;
+					font-size: 15px;
+					color: #2980b9;
 				}
 
 				.controlls {

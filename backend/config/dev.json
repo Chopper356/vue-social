@@ -2,5 +2,6 @@
 	"port": 3000,
 	"mongo": "mongodb://localhost/social",
 	"jwt": "typecssh",
-	"salt": "s0P4$$w0rD"
+	"salt": "s0P4$$w0rD",
+	"imgbb_api": "2d43ec27b9c04d96b5016da3012b5fe9"
 }

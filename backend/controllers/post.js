@@ -1,5 +1,8 @@
 const Post = require("../models/post");
 const Comment = require("../models/comment");
+const imgbbUploader = require("imgbb-uploader");
+const config = require('../config/dev.json');
+const sharp = require('sharp');
 
 module.exports = {
 	async create(req, res) {
@@ -7,13 +10,30 @@ module.exports = {
 			let content = req.body.text.replace(/\n{2,}/gi, "<br><br>");
 				content = content.replace(/\n/, "<br>");
 
-			await Post.create({
+			let create_post = {
 				user: req.user,
 				content
-			});
+			}
+
+			if (req.files.image) {
+				let buffer_base64 = req.files.image.data.toString("base64");
+				let options = {
+					apiKey: config.imgbb_api,
+					base64string: buffer_base64
+				}
+
+				let image = await imgbbUploader(options);
+
+				console.log(image)
+
+				create_post.images = image.image.url;
+			}
+
+			await Post.create(create_post);
 			res.send({success: true});
 		}
 		catch(err) {
+			console.log(err, req.body, req.user)
 			res.send({success: false, error: "Post create error!"});
 		}
 	},

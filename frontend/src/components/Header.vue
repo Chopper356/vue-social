@@ -100,11 +100,13 @@ export default {
 					justify-content: space-between;
 
 					img {
-						width: 50px;
+						width: 45px;
+						height: 45px;
 						border-radius: 5px;
 						margin-right: 15px;
 						transition: all 0.5s;
 						cursor: pointer;
+						object-fit: cover;
 
 						&:hover {
 							transform: scale(1.1);

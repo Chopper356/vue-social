@@ -5,13 +5,14 @@
 		<div class="users">
 			<div class="user" v-for="(user, index) of filteredUsers" :key="index">
 				<router-link :to="/profile/ + user._id" class="content">
-					<img src="https://avatars.githubusercontent.com/u/12010456?v=4" alt="">
+					<img :src="user.avatar" alt="">
 
 					<div class="info">
 						<div class="top">
 							<span class="name">{{ user.name }}</span>
 						</div>
-						<div class="about">{{ user.about_me }}</div>
+						<span class="status" v-if="user.status">#{{ user.status }}</span>
+						<span class="about" v-else>The user's mood is still unknown <i class="fad fa-user-secret"></i></span>
 					</div>
 				</router-link>
 
@@ -19,7 +20,7 @@
 					<template v-if="$store.state.user._id != user._id">
 						<i v-if="!user.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(user)"></i>
 						<i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(user)"></i>
-						<i class="fas fa-paper-plane bg-msg"></i>
+						<!-- <i class="fas fa-paper-plane bg-msg"></i> -->
 					</template>
 					<div v-else class="you">It's you!</div>
 				</div>
@@ -146,6 +147,13 @@ export default {
 					color: #535858;
 					font-weight: 600;
 					margin-right: 10px;
+					// max-width: 100px;
+					// text-overflow: ellipsis;
+					// overflow: hidden;
+					// white-space: nowrap;
+					// display: block;
+
+					
 				}
 
 				.activity {
@@ -160,13 +168,17 @@ export default {
 
 				.about {
 					font-size: 14px;
-					color: #626666;
+					color: #5a5a5a;
 					position: relative;
 					display: -webkit-box;
 					-webkit-line-clamp: 3;
 					-webkit-box-orient: vertical;
 					overflow: hidden;
 					text-overflow: ellipsis;
+
+					i {
+						font-size: 18px;
+					}
 				}
 			}
 
@@ -194,6 +206,7 @@ export default {
 					font-size: 18px;
 					color: #535858;
 					opacity: 0.6;
+					padding: 5px 0px;
 				}
 
 				.bg-msg {

@@ -3,7 +3,12 @@
 		<form class="user-info edit" @submit.prevent="saveProfile">
 			<div class="info">
 				<div class="left-block">
-					<div class="avatar"><img :src="$store.state.user.avatar"></div>
+					<div class="avatar"><img :src="$store.state.user.avatar"><div v-show="image_error" class="img-err">Avatar size <br> > 5MB</div></div>
+					<div class="upload" @click="$refs.upload_input.click()">
+						<input @change="checkSize" type="file" hidden ref="upload_input">
+						<i class="fad fa-upload"></i>
+						<span>Avatar</span>
+					</div>
 				</div>
 
 				<div class="right-block">
@@ -27,18 +32,36 @@ export default {
 			name: "",
 			about_me: "",
 			status: ""
-		}
+		},
+		image_error: false
 	}),
 
 	created() {
 		this.user.name = this.$store.state.user.name;
-		this.user.about_me = this.$store.state.user.about_me;
-		this.user.status = this.$store.state.user.status;
+		this.user.about_me = this.$store.state.user.about_me || "";
+		this.user.status = this.$store.state.user.status || "";
 	},
 
 	methods: {
+		checkSize() {
+			this.image_error = this.$refs.upload_input.files[0].size > 5242880;
+		},
+
 		saveProfile() {
-			this.axios.post(`/profile/edit/${this.$store.state.user._id}`, {user: this.user}).then(({data}) => {
+			let formData = new FormData();
+			let file = this.$refs.upload_input.files[0];
+			if (file && !this.image_error) {
+				formData.append("avatar", file);
+			}
+			formData.append("name", this.user.name);
+			formData.append("about_me", this.user.about_me);
+			formData.append("status", this.user.status);
+
+			console.log(formData)
+
+			this.axios.post(`/profile/edit/${this.$store.state.user._id}`, formData, { headers: {
+				'Content-Type': 'multipart/form-data'
+			}}).then(({data}) => {
 				if (!data.success) {
 					this.error = data.error;
 				} 
@@ -56,6 +79,53 @@ export default {
 
 <style lang="scss">
 	.user-info.edit {
+
+		.left-block {
+			position: relative;
+
+			.avatar {
+				position: relative;
+				.img-err {
+					position: absolute;
+					height: 100%;
+					width: 100%;
+					background-color: rgba(231, 76, 60, 0.8);
+					border-radius: 5px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					text-align: center;
+					top: 0px;
+					left: 0px;
+					color: white;
+					font-size: 18px;
+
+					span {
+						font-weight: 600;
+					}
+				}
+			}
+
+			.upload {
+				font-size: 18px;
+				background-color: #2980b9;
+				color: white;
+				border-radius: 5px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: all 0.5s;
+				padding: 5px 10px;
+				margin-top: 15px;
+
+				span {
+					margin-left: 5px;
+				}
+
+			}
+		}
+
 		textarea {
 			width: 100% !important;
 			max-width: 100%;
