@@ -9,7 +9,7 @@
 				<div class="right-block">
 					<div class="top">
 						<div class="name">{{ profile.name }}</div>
-						<div class="status">#{{ profile.status }}</div>
+						<div v-if="profile.status" class="status">#{{ profile.status }}</div>
 						<div class="controlls">
 							<i v-if="!is_friend && profile._id != $store.state.user._id" class="fas fa-user-plus bg-add" @click="friendAdd"></i>
 							<i v-else-if="profile._id != $store.state.user._id" class="fas fa-user-minus bg-delete" @click="friendAdd"></i>

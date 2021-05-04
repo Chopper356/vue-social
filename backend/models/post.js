@@ -16,7 +16,7 @@ const PostSchema = new mongoose.Schema({
 	}],
 	date_create: {
 		type: Date,
-		default: new Date()
+		default: () => new Date()
 	},
 	likes: [{
 		type: mongoose.Types.ObjectId,

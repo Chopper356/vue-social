@@ -25,7 +25,6 @@ module.exports = {
 			res.send({success: true, comments});
 		}
 		catch(err) {
-			console.log(err)
 			res.send({success: false, error: "Comments loading error!"});
 		}
 	}

@@ -8,13 +8,14 @@ module.exports = {
 		try {
 			let user = req.body;
 
-			let findUser = await User.findOne({email: user.email});
+			let find_user = await User.findOne({email: user.email});
 			let saltRounds = 8;
 
-			if (!findUser) {
+			if (!find_user) {
 				user.password = await bcrypt.hash(user.password, saltRounds);
-				await User.create(user);
-				res.send({success: true, pass: user.password});
+				let new_user = await User.create(user);
+				let token = jwt.sign({ id: new_user._id }, config.jwt);
+				res.send({success: true, token});
 			} 
 			else {
 				res.send({success: false, error: "This user already exists!"});

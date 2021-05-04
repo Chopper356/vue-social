@@ -26,7 +26,6 @@ export default {
 
 	methods: {
 		liked(post, liked) {
-			console.log(post)
 			if (liked) {
 				post.likes.push(this.$store.state.user);
 			}

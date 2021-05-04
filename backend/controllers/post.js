@@ -15,7 +15,7 @@ module.exports = {
 				content
 			}
 
-			if (req.files.image) {
+			if (req.files) {
 				let buffer_base64 = req.files.image.data.toString("base64");
 				let options = {
 					apiKey: config.imgbb_api,
@@ -24,7 +24,6 @@ module.exports = {
 
 				let image = await imgbbUploader(options);
 
-				console.log(image)
 
 				create_post.images = image.image.url;
 			}
@@ -33,14 +32,13 @@ module.exports = {
 			res.send({success: true});
 		}
 		catch(err) {
-			console.log(err, req.body, req.user)
 			res.send({success: false, error: "Post create error!"});
 		}
 	},
 
 	async getAll(req, res) {
 		try {
-			let posts = await Post.find({}).populate("user").populate("likes", "name avatar _id").lean();
+			let posts = await Post.find({}).populate("user").populate("likes", "name avatar _id").sort({date_create: -1}).lean();
 			for(let post of posts) {
 				post.comments = await Comment.countDocuments({post: post._id});
 			}
@@ -48,7 +46,6 @@ module.exports = {
 			res.send({success: true, posts});
 		}
 		catch(err) {
-			console.log(err)
 			res.send({success: false, error: "Post loading error!"});
 		}
 	},
@@ -68,7 +65,6 @@ module.exports = {
 			res.send({success: true});
 		}
 		catch(err) {
-			console.log(err)
 			res.send({success: false, error: "Like added error!"});
 		}
 	}

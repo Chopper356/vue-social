@@ -67,6 +67,7 @@ export default {
 					if (!data.success) {
 						this.errorMsg = data.error;
 					} else {
+						http.setToken(data.token);
 						this.$router.push({ path: '/' });
 					}
 					this.loading = false;

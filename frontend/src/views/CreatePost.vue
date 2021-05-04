@@ -43,7 +43,6 @@ export default {
 		checkSize() {
 			this.image_error = this.$refs.upload_img.files[0].size > 5242880;
 
-			console.log(this.$refs.upload_img.files[0])
 			
 			let file = this.$refs.upload_img.files[0];
 			let reader = new FileReader();
@@ -62,7 +61,6 @@ export default {
 			}
 			formData.append("text", this.text);
 
-			console.log(formData)
 
 			this.axios.post("/post/create", formData, { headers: {
 				'Content-Type': 'multipart/form-data'

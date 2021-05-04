@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
 	},
 	date_create: {
 		type: Date,
-		default: new Date()
+		default: () => new Date()
 	},
 	about_me: {
 		type: String,

@@ -17,7 +17,7 @@ const CommentSchema = new mongoose.Schema({
 	},
 	date_create: {
 		type: Date,
-		default: new Date()
+		default: () => new Date()
 	}
 }, {
 	versionKey: false

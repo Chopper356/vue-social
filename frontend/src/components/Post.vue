@@ -14,12 +14,12 @@
 			<img v-if="post.images" class="img-content" :src="post.images">
 
 			<div class="footer">
-				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i><span @click="show_users = !show_users">{{ post.likes.length }} <span class="text">Likes</span></span>
+				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i><span @click="showLikes">{{ post.likes.length }} <span class="text">Likes</span></span>
 
 				<i class="far fa-comment" @click="showComments(post)"></i> <span @click="showComments(post)">{{ post.comments || 0 }} <span class="text">Reply</span></span>
 
-				<div class="users-liked" :class="{'show-users': show_users}">
-					<i class="far fa-times" @click="show_users = !show_users"></i>
+				<div class="users-liked" :class="{'show-users': show_likes}">
+					<i class="far fa-times" @click="show_likes = !show_likes"></i>
 					<div class="user-liked" v-for="(user, index) of post.likes" :key="index">
 						<img :src="user.avatar">
 						<router-link :to="/profile/ + user._id">{{ user.name }}</router-link>
@@ -36,7 +36,7 @@ export default {
 
 	data: () => ({
 		liked: false,
-		show_users: false
+		show_likes: false
 	}),
 
 	created() {
@@ -48,6 +48,11 @@ export default {
 	},
 
 	methods: {
+		showLikes() {
+			if (this.post.likes.length) {
+				this.show_likes = !this.show_likes
+			}
+		},
 		showComments(post) {
 			this.$store.state.post_opened = post;
 		},

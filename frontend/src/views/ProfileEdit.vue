@@ -57,8 +57,6 @@ export default {
 			formData.append("about_me", this.user.about_me);
 			formData.append("status", this.user.status);
 
-			console.log(formData)
-
 			this.axios.post(`/profile/edit/${this.$store.state.user._id}`, formData, { headers: {
 				'Content-Type': 'multipart/form-data'
 			}}).then(({data}) => {

@@ -30,8 +30,6 @@ module.exports = {
 				return res.send({success: false, error: "Access denied!"});
 			}
 
-			// let file = await sharp(req.files.avatar.data).resize(300, 200).toBuffer();
-			// console.log(file);
 			let user = req.body;
 			let set = {
 				name: user.name,
@@ -55,12 +53,10 @@ module.exports = {
 				$set: set
 			});
 
-			console.log(req.body)
 			
 			res.send({success: true});
 		}
 		catch(error) {
-			console.log(error)
 			res.send({success: false, error: "Database error!"});
 		}
 	},
