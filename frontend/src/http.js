@@ -2,7 +2,7 @@ import axios from 'axios';
 import store from './store';
 
 let api = axios.create({
-	baseURL: "http://localhost:3000/api",
+	baseURL: process.env.NODE_ENV == "dev" ? "http://localhost:3000/api" : document.location.origin + "/api",
 });
 
 const setToken = (token) => {
