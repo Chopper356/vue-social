@@ -3,7 +3,7 @@
 		<form class="user-info edit" @submit.prevent="saveProfile">
 			<div class="info">
 				<div class="left-block">
-					<div class="avatar"><img :src="$store.state.user.avatar"><div v-show="image_error" class="img-err">Avatar size <br> > 5MB</div></div>
+					<div class="avatar"><img :src="user.avatar"><div v-show="image_error" class="img-err">Avatar size <br> > 5MB</div></div>
 					<div class="upload" @click="$refs.upload_input.click()">
 						<input @change="checkSize" type="file" accept=".png, .jpg, .jpeg, .gif" hidden ref="upload_input">
 						<i class="fad fa-upload"></i>
@@ -31,20 +31,35 @@ export default {
 		user: {
 			name: "",
 			about_me: "",
-			status: ""
+			status: "",
+			avatar: ""
 		},
 		image_error: false
 	}),
 
 	created() {
-		this.user.name = this.$store.state.user.name;
-		this.user.about_me = this.$store.state.user.about_me || "";
-		this.user.status = this.$store.state.user.status || "";
+		this.checkUserData()
 	},
 
 	methods: {
+		checkUserData() {
+			this.user.name = this.$store.state.user.name;
+			this.user.about_me = this.$store.state.user.about_me || "";
+			this.user.about_me = this.user.about_me.replace(/<br>/gi, "\n");
+			this.user.status = this.$store.state.user.status || "";
+			this.user.avatar = this.$store.state.user.avatar;
+		},
 		checkSize() {
 			this.image_error = this.$refs.upload_input.files[0].size > 5242880;
+
+			if (!this.image_error) {
+				let file = this.$refs.upload_input.files[0];
+				let reader = new FileReader();
+				reader.onload = (e) => {
+					this.user.avatar = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
 		},
 
 		saveProfile() {
@@ -67,6 +82,7 @@ export default {
 					this.$store.state.user.name = this.user.name;
 					this.$store.state.user.about_me = this.user.about_me;
 					this.$store.state.user.status = this.user.status;
+					this.$store.state.user.avatar = this.user.avatar;
 					this.$router.push({ path: `/profile/${this.$store.state.user._id}` });
 				}
 			});
@@ -143,11 +159,13 @@ export default {
 			outline: none;
 			padding: 5px;
 			font-size: 18px !important;
+			top: 0px !important;
 		}
 
 		.status {
 			flex: 1;
 			margin: 0px 15px;
+			margin-left: 15px !important;
 		}
 
 		button {

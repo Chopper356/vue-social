@@ -4,27 +4,35 @@
 
 		<div class="content">
 			<div class="header">
-				<div class="user">{{ post.user.name }}</div>
+				<router-link :to="/profile/ + post.user._id" class="user">{{ post.user.name }}</router-link>
 				<div class="time">{{ post.date_create | moment("DD.MM.YYYY — HH:mm") }}</div>
 
 				<i class="far fa-ellipsis-h"></i>
 			</div>
 
 			<div class="message" v-html="post.content"></div>
-			<img v-if="post.images" class="img-content" :src="post.images">
+			<img v-if="post.images" @click="$store.state.image_opened = post.images" class="img-content" :src="post.images">
 
-			<div class="footer">
-				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i><span @click="showLikes">{{ post.likes.length }} <span class="text">Likes</span></span>
+			<div class="footer" v-if="footer">
+				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i>
+				<span @click="showLikes(post._id)">
+					{{ post.likes.length }}<span class="text">Likes</span>
+				</span>
 
-				<i class="far fa-comment" @click="showComments(post)"></i> <span @click="showComments(post)">{{ post.comments || 0 }} <span class="text">Reply</span></span>
+				<i class="far fa-comment" @click="showComments(post)"></i> 
+				<span @click="showComments(post)">
+					{{ post.comments || 0 }} <span class="text right-text">Reply</span>
+				</span>
 
-				<div class="users-liked" :class="{'show-users': show_likes}">
-					<i class="far fa-times" @click="show_likes = !show_likes"></i>
-					<div class="user-liked" v-for="(user, index) of post.likes" :key="index">
-						<img :src="user.avatar">
-						<router-link :to="/profile/ + user._id">{{ user.name }}</router-link>
+				<transition name="likes">
+					<div class="users-liked" v-if="show_likes && likes.length" :class="{'show-users': show_likes}">
+						<i class="far fa-times" @click="show_likes = !show_likes"></i>
+						<div class="user-liked" v-for="(user, index) of likes" :key="index">
+							<img :src="user.avatar">
+							<router-link :to="/profile/ + user._id">{{ user.name }}</router-link>
+						</div>
 					</div>
-				</div>
+				</transition>
 			</div>
 		</div>
 	</div>	
@@ -32,36 +40,60 @@
 
 <script>
 export default {
-	props: ["post"],
+	props: {
+		post: Object,
+		footer: {
+			type: Boolean,
+			default: true
+		}
+	},
 
 	data: () => ({
 		liked: false,
-		show_likes: false
+		show_likes: false,
+		likes: []
 	}),
 
 	created() {
-		if (this.$store.state.is_auth) {
-			for(let user of this.post.likes) {
-				(user._id == this.$store.state.user._id) ? this.liked = true : this.liked = false;
-			}
+		if (this.footer) {
+			this.likesCheck();
 		}
 	},
 
 	methods: {
-		showLikes() {
-			if (this.post.likes.length) {
-				this.show_likes = !this.show_likes
+		likesCheck() {
+			if (this.$store.state.is_auth) {
+				for(let user of this.post.likes) {
+					(user._id == this.$store.state.user._id) ? this.liked = true : this.liked = false;
+				}
 			}
 		},
+
+		showLikes(id) {
+			this.axios.get(`/post/${id}/likes`).then(({data}) => {
+				if (data.success) {
+					this.show_likes = !this.show_likes
+					this.likes = data.post[0].likes;
+				}
+			})
+		},
+
 		showComments(post) {
 			this.$store.state.post_opened = post;
 		},
+
 		addLike(post) {
 			this.axios.post("/post/like", {id: post._id, liked: !this.liked}).then(({data}) => {
 				if (data.success) {
 					this.liked = !this.liked;
 
-					this.$emit("liked", this.liked);
+					if (this.liked) {
+						this.post.likes.push(this.$store.state.user);
+					}
+					else {
+						let index = this.post.likes.indexOf(this.$store.state.user._id);
+						this.post.likes.splice(index, 1);
+					}
 				}
 			})
 		}
@@ -98,6 +130,7 @@ export default {
 			max-width: 250px;
 			border-radius: 5px;
 			margin-bottom: 10px;
+			cursor: pointer;
 		}
 
 		.avatar {
@@ -164,7 +197,27 @@ export default {
 
 				.text {
 					font-size: 14px;
-					margin-left: 0px;
+				}
+				.right-text {
+					margin-left: 5px;
+				}
+			}
+
+			.likes-enter-active {
+				animation: show-users 0.25s;
+			}
+			.likes-leave-active {
+				animation: show-users 0.25s reverse;
+			}
+
+			@keyframes show-users {
+				0% {
+					opacity: 0;
+					transform: scale(0.6);
+				}
+				100% {
+					opacity: 1;
+					transform: scale(1);
 				}
 			}
 
@@ -176,10 +229,10 @@ export default {
 				border-radius: 10px;
 				background-color: white;
 				box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
-				transition: all 0.5s;
-				max-height: 0px;
+				border: 1px solid rgba(0, 0, 0, 0.1);
 				overflow: hidden;
 				position: absolute;
+				max-height: 300px;
 				top: -50px;
 				left: 35px;
 				z-index: 90;
@@ -198,16 +251,13 @@ export default {
 				}
 
 				i {
-					position: absolute;
-					right: 10px;
+					position: sticky;
+					left: 90%;
 					top: 10px;
 				}
 
 				&.show-users {
-					max-height: 250px;
 					overflow: auto;
-					padding: 20px 0px;
-					border: 1px solid rgba(0, 0, 0, 0.1);
 				}
 
 				.user-liked {

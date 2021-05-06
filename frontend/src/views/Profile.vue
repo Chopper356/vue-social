@@ -11,9 +11,11 @@
 						<div class="name">{{ profile.name }}</div>
 						<div v-if="profile.status" class="status">#{{ profile.status }}</div>
 						<div class="controlls">
-							<!-- <i v-if="!is_friend && profile._id != $store.state.user._id" class="fas fa-user-plus bg-add" @click="friendAdd"></i> -->
-							<!-- <i v-else-if="profile._id != $store.state.user._id" class="fas fa-user-minus bg-delete" @click="friendAdd"></i> -->
-							<!-- <i v-if="profile._id != $store.state.user._id" class="fas fa-paper-plane bg-msg"></i> -->
+							<template v-if="profile._id != $store.state.user._id">
+								<i v-if="!profile.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(profile)"></i>
+								<i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(profile)"></i>
+								<!-- <i class="fas fa-paper-plane bg-msg"></i> -->
+							</template>
 							<router-link :to="'/profile/edit/' + $store.state.user._id"><i v-if="profile._id == $store.state.user._id" class="fas fa-pencil-alt bg-change"></i></router-link>
 						</div>
 					</div>
@@ -24,38 +26,24 @@
 
 		</div>
 
-		<!-- <div class="posts-page">
-			<div class="title">Posts:</div>
+		<div class="profile-title">Posts:</div>
 
-			<div class="post-component">
-				<img class="avatar" src="https://avatars.githubusercontent.com/u/12010456?v=4">
+		<Posts v-if="posts.length" :userid="$route.params.id"></Posts>
 
-				<div class="content">
-					<div class="header">
-						<router-link to="/profile/608207ef2089182fd82c65b2" class="user">Chrom</router-link>
-						<div class="time">10ч</div>
+		<div v-else class="empty-posts">This user has not yet published any posts.</div>
 
-						<i class="far fa-ellipsis-h"></i>
-					</div>
-
-					<div class="message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa officiis quasi quia at tempore, expedita quo mollitia facilis assumenda, placeat excepturi. Dolorem, voluptatibus laborum impedit sunt tenetur eius et eveniet.</div>
-
-					<div class="footer">
-						<i class="far fa-heart"></i> <span>568</span>
-
-						<i class="far fa-comment"></i> <span>34</span>
-					</div>
-				</div>
-			</div>
-		</div> -->
 	</div>	
 </template>
 
 <script>
+import Posts from "../components/Posts";
+
 export default {
+	components: {Posts},
 	data: () => ({
 		is_friend: false,
-		profile: {}
+		profile: {},
+		posts: []
 	}),
 	mounted() {
 		this.routeProfile();
@@ -66,7 +54,10 @@ export default {
 			let user_id = this.$route.params.id;
 			this.axios.get(`/profile/${user_id}`).then(({data}) => {
 				if (data.success) {
+					data.user.is_friend = false;
 					this.profile = data.user;
+					this.posts = data.posts;
+					this.checkFriends();
 					
 					if (data.user._id != user_id) {
 						this.$router.push({ path: `/profile/${data.user._id}` });
@@ -75,10 +66,30 @@ export default {
 			})
 		},
 
-		friendAdd() {
-			this.axios.post("/profile/friendadd", {id: this.profile._id, add: !this.is_friend}).then(({data}) => {
+		checkFriends() {
+			let user = this.$store.state.user;
+
+			if (user.friends.includes(this.profile._id)) {
+				this.profile.is_friend = true;
+			}
+			else {
+				this.profile.is_friend = false;
+			}
+		},
+
+		friendAdd(user) {
+			this.axios.post("/profile/friendadd", {id: this.profile._id, add: !this.profile.is_friend}).then(({data}) => {
 				if (data.success) {
-					this.is_friend = !this.is_friend;
+					this.profile.is_friend = !this.profile.is_friend;
+					console.log(this.profile.is_friend)
+
+					if (user.is_friend) {
+						this.$store.state.user.friends.push(user._id);
+					}
+					else {
+						let idx = this.$store.state.user.friends.indexOf(user._id);
+						this.$store.state.user.friends.splice(idx, 1);
+					}
 				}
 			})
 		},
@@ -89,21 +100,33 @@ export default {
 			if (to.params.id != from.params.id) {
 				this.routeProfile();
 			}
-		},
-		"$store.state.profile"(newVal) {
-			if (newVal) {
-				if (this.$store.state.is_auth) {
-					for(let user of this.profile.friends) {
-						(user == this.$store.state.user._id) ? this.is_friend = true: this.is_friend = false;
-					}
-				}
-			}
 		}
 	}
 }
 </script>
 
 <style lang="scss">
+	.profile-title {
+		color: #2c3e50;
+		font-size: 30px;
+		font-weight: 600;
+		margin: 40px 0px;
+		text-align: center;
+	}
+
+	.empty-posts {
+		text-align: center;
+		padding: 20px;
+		background-color: white;
+		border-radius: 10px;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
+		width: 800px;
+		margin: auto;
+		font-size: 18px;
+		color: #7a7a7a;
+	}
+
 	.user-info {
 		width: 800px;
 		margin: auto;

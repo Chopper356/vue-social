@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-comments">
+	<div class="bg-comments" @click.self="$store.state.post_opened = null">
 		<div class="comments">
 			<div class="top">
 				<div class="title">Comments</div>
@@ -57,7 +57,7 @@ export default {
 		sendComment() {
 			this.axios.post("/comment/create", {text: this.text, post_id: this.$store.state.post_opened._id}).then(({data}) => {
 				if (data.success) {
-					this.comments.unshift(data.comment);
+					this.comments.push(data.comment);
 					this.$emit("created");
 
 					this.text = "";
@@ -87,7 +87,7 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			z-index: 100;
+			z-index: 500;
 			overflow: hidden;
 			transition: all 0.5s;
 
@@ -128,6 +128,7 @@ export default {
 			border-radius: 10px;
 			border: 1pc solid 1px rgba(0, 0, 0, 0.1);
 			width: 800px;
+			overflow: hidden;
 
 			.top {
 				display: flex;
@@ -214,10 +215,17 @@ export default {
 				margin-top: 25px;
 				display: flex;
 				align-items: center;
+				background-color: #f5f5f5;
+				margin: -25px -25px;
+				padding: 25px 25px;
+				position: relative;
+				z-index: 200;
 
 				img {
 					margin-right: 10px;
 					cursor: pointer;
+					height: 40px;
+					width: 40px;
 				}
 
 				form {
@@ -231,7 +239,8 @@ export default {
 					margin-right: 20px;
 					outline: none;
 					border: none;
-					border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+					border: 1px solid rgba(0, 0, 0, 0.1);
+					border-radius: 5px;
 					padding: 10px 5px;
 					font-size: 16px;
 					color: #535858;
@@ -246,7 +255,7 @@ export default {
 					border: 1px solid rgba(0, 0, 0, 0.3);
 					border-radius: 5px;
 					color: white;
-					padding: 5px 15px;
+					padding: 10px 15px;
 					cursor: pointer;
 					outline: none;
 					transition: all 0.5s;

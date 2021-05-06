@@ -2,16 +2,33 @@
 	<div id="app">
 		<Header></Header>
 
-		<router-view/>
+		<transition name="fullscreen">
+			<FullscreenImage v-if="$store.state.image_opened"></FullscreenImage>
+		</transition>
+
+		<template v-if="checkStorage">
+			<router-view/>
+		</template>
 	</div>
 </template>
 
 <script>
 import http from './http';
 import Header from './components/Header';
+import FullscreenImage from './components/FullscreenImage';
 
 export default {
-	components: {Header},
+	components: {Header, FullscreenImage},
+	computed: {
+		checkStorage() {
+			if (!localStorage.token) return true;
+
+			if (this.$store.state.user.name) return true;
+
+			return false;
+		}
+	},
+
 	created() {
 		if (localStorage.token) {
 			http.setToken(localStorage.token);
@@ -26,6 +43,7 @@ body {
 	padding: 0px;
 	font-family: 'Open Sans', sans-serif;
 	background-color: #f5f5f5;
+	min-width: 1200px;
 }
 
 * {
@@ -42,6 +60,14 @@ input, textarea, button, select {
 a {
 	text-decoration: none;
 	color: #2980b9;
+}
+
+
+.fullscreen-enter-active, .fullscreen-leave-active {
+	transition: opacity .25s;
+}
+.fullscreen-enter, .fullscreen-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+	opacity: 0;
 }
 
 #app {

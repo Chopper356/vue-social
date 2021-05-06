@@ -8,7 +8,7 @@ module.exports = {
 	async create(req, res) {
 		try {
 			let content = req.body.text.replace(/\n{2,}/gi, "<br><br>");
-				content = content.replace(/\n/, "<br>");
+				content = content.replace(/\n/gi, "<br>");
 
 			let create_post = {
 				user: req.user,
@@ -49,6 +49,23 @@ module.exports = {
 			res.send({success: false, error: "Post loading error!"});
 		}
 	},
+
+	async getUserPosts(req, res) {
+		try {
+			if (!req.params.id) return res.send({success: false, error: "Post loading error!"});
+
+			let posts = await Post.find({user: req.params.id}).populate("user").populate("likes", "name avatar _id").sort({date_create: -1}).lean();
+			for(let post of posts) {
+				post.comments = await Comment.countDocuments({post: post._id});
+			}
+
+			res.send({success: true, posts});
+		}
+		catch(err) {
+			res.send({success: false, error: "Post loading error!"});
+		}
+	},
+
 	async like(req, res) {
 		try {
 			if (req.body.liked) {
@@ -66,6 +83,16 @@ module.exports = {
 		}
 		catch(err) {
 			res.send({success: false, error: "Like added error!"});
+		}
+	},
+	
+	async showLikes(req, res) {
+		try {
+			let post = await Post.find({_id: req.params.id}).populate("likes", "name avatar _id").lean();
+			res.send({success: true, post});
+		}
+		catch(err) {
+			res.send({success: false, error: "Show likes error!"});
 		}
 	}
 }

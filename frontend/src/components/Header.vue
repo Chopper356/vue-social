@@ -57,6 +57,7 @@ export default {
 		margin-bottom: 70px;
 		position: sticky;
 		top: 0px;
+		z-index: 499;
 		
 		.wrapper {
 			display: flex;

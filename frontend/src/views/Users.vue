@@ -8,18 +8,16 @@
 					<img :src="user.avatar" alt="">
 
 					<div class="info">
-						<div class="top">
-							<span class="name">{{ user.name }}</span>
-						</div>
-						<span class="status" v-if="user.status">#{{ user.status }}</span>
-						<span class="about" v-else>The user's mood is still unknown <i class="fad fa-user-secret"></i></span>
+						<div class="name" :title="user.name">{{ user.name }}</div>
+						<div class="status" v-if="user.status">#{{ user.status }}</div>
+						<div class="about" v-else>The user's mood is still unknown <i class="fad fa-user-secret"></i></div>
 					</div>
 				</router-link>
 
 				<div class="bottom">
 					<template v-if="$store.state.user._id != user._id">
-						<!-- <i v-if="!user.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(user)"></i> -->
-						<!-- <i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(user)"></i> -->
+						<i v-if="!user.is_friend" class="fas fa-user-plus bg-add" @click="friendAdd(user)"></i>
+						<i v-else class="fas fa-user-minus bg-delete" @click="friendAdd(user)"></i>
 						<!-- <i class="fas fa-paper-plane bg-msg"></i> -->
 					</template>
 					<div v-else class="you">It's you!</div>
@@ -82,14 +80,6 @@ export default {
 				}
 			})
 		}
-	},
-
-	watch: {
-		"$store.state.profile"(newVal) {
-			if (newVal) {
-				this.checkFriends();
-			}
-		}
 	}
 }
 </script>
@@ -137,6 +127,19 @@ export default {
 				object-fit: cover;
 				border-radius: 5px;
 				margin-right: 20px;
+			}
+
+			.info {
+				flex-shrink: 0;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				max-width: 69%;
+
+				.name {
+					text-overflow: ellipsis;
+					overflow: hidden;
+					white-space: nowrap;
+				}
 			}
 
 			.content {

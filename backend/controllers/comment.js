@@ -21,7 +21,7 @@ module.exports = {
 	},
 	async getCommentsForPost(req, res) {
 		try {
-			let comments = await Comment.find({post: req.params.post}).populate("user", "avatar name _id").sort({date_create: -1});
+			let comments = await Comment.find({post: req.params.post}).populate("user", "avatar name _id").sort({date_create: 1});
 			res.send({success: true, comments});
 		}
 		catch(err) {

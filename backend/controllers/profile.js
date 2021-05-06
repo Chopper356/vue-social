@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Post = require('../models/post');
 const imgbbUploader = require("imgbb-uploader");
 const config = require('../config/dev.json');
 const sharp = require('sharp');
@@ -17,7 +18,8 @@ module.exports = {
 	async getOpenProfile(req, res) {
 		try {
 			let user = await User.findOne({_id: req.params.id}, {password: 0});
-			res.send({success: true, user});
+			let posts = await Post.find({user: req.params.id});
+			res.send({success: true, user, posts});
 		}
 		catch(error) {
 			res.send({success: false, error: "Database error!"});
@@ -32,7 +34,7 @@ module.exports = {
 
 			let user = req.body;
 			let about_me = req.body.about_me.replace(/\n{2,}/gi, "<br><br>");
-				about_me = about_me.replace(/\n/, "<br>");
+				about_me = about_me.replace(/\n/gi, "<br>");
 			
 			let set = {
 				name: user.name,
