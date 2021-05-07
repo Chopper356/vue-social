@@ -64,7 +64,13 @@ export default {
 		likesCheck() {
 			if (this.$store.state.is_auth) {
 				for(let user of this.post.likes) {
-					(user._id == this.$store.state.user._id) ? this.liked = true : this.liked = false;
+					if (user._id == this.$store.state.user._id) {
+						this.liked = true;
+						break;
+					}
+					else {
+						this.liked = false;
+					}
 				}
 			}
 		},
