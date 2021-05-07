@@ -1,11 +1,11 @@
 <template>
 	<div class="header">
 		<div class="wrapper">
-			<router-link to="/" class="logo">TypeCode</router-link>
+			<router-link to="/" class="logo"><i class="fad fa-code"></i> TypeCode</router-link>
 		
 			<div class="menu">
-				<router-link to="/">Home</router-link>
-				<router-link to="/users">Users</router-link>
+				<router-link to="/"><i class="far fa-home"></i> Home</router-link>
+				<router-link to="/users"><i class="far fa-users"></i> Users</router-link>
 			</div>
 
 			<div class="profile">
@@ -52,9 +52,10 @@ export default {
 		padding: 15px 10px;
 		box-shadow: 0px 0px 30px rgba(75, 102, 121, 0.2);
 		color: #333;
-		background-color: white;
+		background-color: rgba(255, 255, 255, 0.8);
+		backdrop-filter: saturate(180%) blur(20px);
 		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-		margin-bottom: 70px;
+		margin-bottom: 50px;
 		position: sticky;
 		top: 0px;
 		z-index: 499;
