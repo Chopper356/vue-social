@@ -25,13 +25,44 @@ module.exports = {
 				let image = await imgbbUploader(options);
 
 
-				create_post.images = image.image.url;
+				create_post.images = [{
+					large:  image.image.url,
+					medium: image.medium.url
+				}];
 			}
 
 			await Post.create(create_post);
 			res.send({success: true});
 		}
 		catch(err) {
+			console.log(err)
+			res.send({success: false, error: "Post create error!"});
+		}
+	},
+
+	async delete(req, res) {
+		try {
+			await Post.findOneAndRemove({_id: req.params.id});
+
+			res.send({success: true});
+		}
+		catch(err) {
+			console.log(err)
+			res.send({success: false, error: "Post create error!"});
+		}
+	},
+
+	async edit(req, res) {
+		try {
+			let content = req.body.text.replace(/\n{2,}/gi, "<br><br>");
+				content = content.replace(/\n/gi, "<br>");
+
+			await Post.updateOne({_id: req.params.id}, {content});
+
+			res.send({success: true, content});
+		}
+		catch(err) {
+			console.log(err)
 			res.send({success: false, error: "Post create error!"});
 		}
 	},
@@ -70,7 +101,7 @@ module.exports = {
 		try {
 			if (req.body.liked) {
 				await Post.updateOne({_id: req.body.id}, {
-					$push: {likes: req.user}
+					$addToSet: {likes: req.user}
 				})
 			}
 			else {

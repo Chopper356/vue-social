@@ -7,22 +7,42 @@
 				<router-link :to="/profile/ + post.user._id" class="user">{{ post.user.name }}</router-link>
 				<div class="time">{{ post.date_create | moment("DD.MM.YYYY — HH:mm") }}</div>
 
-				<i class="far fa-ellipsis-h"></i>
+				<i class="far fa-ellipsis-h" @click="options = !options" v-if="is_creator"></i>
+
+				<div class="options" v-if="is_creator && options">
+					<div class="text" @click="replaceTextareaContent();">
+						<i class="fal fa-pencil-alt bg-change"></i> Edit
+					</div>
+
+					<div class="text" @click="deletePost(post._id)"><i class="fal fa-trash-alt"></i> Delete</div>
+				</div>
 			</div>
 
-			<div class="message" v-html="post.content"></div>
-			<img v-if="post.images" @click="$store.state.image_opened = post.images" class="img-content" :src="post.images">
+			<div class="message" v-if="!edit" v-html="post.content"></div>
+			<textarea v-else-if="is_creator" v-model="post.content"></textarea>
+			<img v-for="(img, index) of post.images" @click="$store.state.image_opened = img.large" class="img-content" :class="{'empty-text': post.content == ''}" :key="index" :src="img.medium">
+			
+			<div class="footer" v-if="footer" :class="{'edit': edit}">
+				<div class="left" v-if="!edit">
+					<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i>
+					<span @click="showLikes(post._id)">
+						{{ post.likes.length }}<span class="text">Likes</span>
+					</span>
 
-			<div class="footer" v-if="footer">
-				<i class="far fa-heart" :class="{'fas': liked}" @click="addLike(post);"></i>
-				<span @click="showLikes(post._id)">
-					{{ post.likes.length }}<span class="text">Likes</span>
-				</span>
+					<i class="far fa-comment" @click="showComments(post)"></i> 
+					<span @click="showComments(post)">
+						{{ post.comments || 0 }} <span class="text right-text">Reply</span>
+					</span>
+				</div>
 
-				<i class="far fa-comment" @click="showComments(post)"></i> 
-				<span @click="showComments(post)">
-					{{ post.comments || 0 }} <span class="text right-text">Reply</span>
-				</span>
+				<div class="right">
+					<!-- <div class="share" v-if="!edit"><i class="fa fa-link"></i> Share</div> -->
+					
+					<template v-if="edit">
+						<button @click="cancelEdit(), edit = false" class="cancel">Cancel</button>
+						<button @click="editPost(post._id);" class="save"><i class="fa fa-save"></i> Save</button>
+					</template>
+				</div>
 
 				<transition name="likes">
 					<div class="users-liked" v-if="show_likes && likes.length" :class="{'show-users': show_likes}">
@@ -39,6 +59,8 @@
 </template>
 
 <script>
+import Utils from '../utils';
+
 export default {
 	props: {
 		post: Object,
@@ -51,6 +73,9 @@ export default {
 	data: () => ({
 		liked: false,
 		show_likes: false,
+		options: false,
+		edit: false,
+		editText: null,
 		likes: []
 	}),
 
@@ -58,9 +83,48 @@ export default {
 		if (this.footer) {
 			this.likesCheck();
 		}
+		this.editText = this.post.content;
+	},
+
+	computed: {
+		is_creator() {
+			return this.post.user._id == this.$store.state.user._id;
+		}
 	},
 
 	methods: {
+		deletePost(id) {
+			if (confirm("Delete this post?")) {
+				this.axios.post(`/post/${id}/delete`).then(({data}) => {
+					if (data.success) {
+						this.$emit("delete-post", id);
+						this.options = false;
+					}
+				});
+			}
+		},
+
+		replaceTextareaContent() {
+			this.edit = !this.edit; 
+			this.options = false;
+			this.post.content = Utils.replaceToN(this.post.content);
+		},
+
+		cancelEdit() {
+			this.post.content = this.editText;
+			this.options = false;
+		},
+
+		editPost(id) {
+			this.axios.post(`/post/${id}/edit`, {text: this.post.content}).then(({data}) => {
+				if (data.success) {
+					this.edit = false;
+					this.post.content = data.content;
+					console.log("Post changed!")
+				}
+			});
+		},
+
 		likesCheck() {
 			if (this.$store.state.is_auth) {
 				for(let user of this.post.likes) {
@@ -139,6 +203,11 @@ export default {
 			cursor: pointer;
 		}
 
+		.empty-text {
+			max-width: 100%;
+			max-height: 400px;
+		}
+
 		.avatar {
 			width: 75px;
 			height: 75px;
@@ -150,9 +219,10 @@ export default {
 		.header {
 			box-shadow: none;
 			display: flex;
-			align-items: center;
+			align-items: baseline;
 			justify-content: space-between;
 			padding: 0;
+			position: relative;
 
 			.time {
 				flex: 1;
@@ -166,19 +236,65 @@ export default {
 				color: #535858;
 				font-size: 24px;
 			}
+
+			.options {
+				position: absolute;
+				right: 20px;
+				top: 15px;
+				background-color: white;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
+				border-radius: 10px 0px 10px 10px;
+				z-index: 20;
+
+				.text {
+					padding: 8px 15px;
+					font-size: 15	px;
+					font-weight: 600;
+					cursor: pointer;
+					transition: all 0.25s;
+
+					&:hover {
+						background-color: rgba(0, 0, 0, 0.05);
+					}
+
+					i {
+						min-width: 25px;
+					}
+				}
+			}
 		}
 
 		.message {
 			margin-bottom: 10px;
 			font-size: 18px;
+			word-break: break-word;
 
 			a {
 				font-weight: 700;
 			}
 		}
 
+		textarea {
+			max-width: 100%;
+			min-width: 100%;
+			max-height: 200px;
+			min-height: 200px;
+			outline: none;
+			resize: none;
+			border: 1px solid rgba(0, 0, 0, 0.12);
+			border-radius: 5px;
+			padding: 10px;
+			font-size: 20px;
+			margin: 7px 0px;
+		}
+
 		.footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
 			position: relative;
+			z-index: 15;
 			i {
 				opacity: 0.5;
 				transition: all 0.5s;
@@ -193,6 +309,58 @@ export default {
 				&.fas {
 					opacity: 1;
 					color: #e74c3c;
+				}
+			}
+
+			&.edit {
+				display: block;
+			}
+
+			.right {
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+				font-size: 14px;
+
+				.share {
+					cursor: pointer;
+					transition: all 0.5s;
+
+					&:hover {
+						i {
+							opacity: 1;
+						}
+					}
+				}
+
+				button {
+					padding: 5px 10px;
+					background-color: #3498db;
+					color: white;
+					border: 1px solid rgba(0, 0, 0, 0.3);
+					border-radius: 5px;
+					outline: none;
+					cursor: pointer;
+					font-size: 18px;
+					transition: all 0.5s;
+
+					&:hover {
+						box-shadow: 0px 10px 30px rgba(51, 152, 219, 0.3);
+					}
+
+					i {
+						margin-right: 5px;
+						opacity: 1;
+					}
+				}
+
+				.cancel {
+					background-color: #e74c3c;
+					margin-right: 10px;
+
+					&:hover {
+						box-shadow: 0px 10px 30px rgba(231, 76, 60, 0.3);
+					}
 				}
 			}
 

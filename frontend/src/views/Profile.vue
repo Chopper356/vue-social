@@ -56,7 +56,7 @@ export default {
 				if (data.success) {
 					data.user.is_friend = false;
 					this.profile = data.user;
-					this.posts = data.posts;
+					this.$set(this.posts, 0, data.posts);
 					this.checkFriends();
 					
 					if (data.user._id != user_id) {
@@ -99,6 +99,7 @@ export default {
 		$route(to, from) {
 			if (to.params.id != from.params.id) {
 				this.routeProfile();
+				console.log("qweqweqw")
 			}
 		}
 	}

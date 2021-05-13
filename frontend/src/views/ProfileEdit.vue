@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import Utils from '../utils';
+
 export default {
 	data: () => ({
 		user: {
@@ -45,7 +47,7 @@ export default {
 		checkUserData() {
 			this.user.name = this.$store.state.user.name;
 			this.user.about_me = this.$store.state.user.about_me || "";
-			this.user.about_me = this.user.about_me.replace(/<br>/gi, "\n");
+			this.user.about_me = Utils.replaceToN(this.user.about_me);
 			this.user.status = this.$store.state.user.status || "";
 			this.user.avatar = this.$store.state.user.avatar;
 		},

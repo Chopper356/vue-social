@@ -28,13 +28,13 @@ export default {
 		.content {
 			position: relative;
 			text-align: center;
-			max-height: 800px;
-			max-width: 600px;
+			max-height: 90vh;
+			max-width: 90vw;
 			img {
 				box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
 				border-radius: 10px;
-				max-height: 800px;
-				max-width: 600px;
+				max-height: 90vh;
+				max-width: 90vw;
 			}
 
 			i {

@@ -18,7 +18,7 @@
 				</div>
 			</div>
 
-			<div v-else class="empty">No comments yet 🙁<span>Be the first! 😀</span></div>
+			<div v-else class="empty">No comments yet<span>Be the first! 😀</span></div>
 
 			<div class="input-comment">
 				<router-link :to="/profile/ + $store.state.user._id" tag="img" :src="$store.state.user.avatar" alt=""></router-link>
@@ -165,8 +165,8 @@ export default {
 
 			.comment {
 				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-				margin-bottom: 20px;
-				padding-bottom: 20px;
+				margin-bottom: 10px;
+				padding-bottom: 10px;
 
 				&:last-child {
 					border-bottom: none;
@@ -212,12 +212,12 @@ export default {
 			}
 
 			.input-comment {
-				margin-top: 25px;
 				display: flex;
 				align-items: center;
 				background-color: #f5f5f5;
 				margin: -25px -25px;
 				padding: 25px 25px;
+				margin-top: 25px;
 				position: relative;
 				z-index: 200;
 

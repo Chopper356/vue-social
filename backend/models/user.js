@@ -7,6 +7,8 @@ const UserSchema = new mongoose.Schema({
 	},
 	avatar: {
 		type: String,
+		small: String,
+		medium: String,
 		default: "https://avatars.githubusercontent.com/u/12010456?v=4"
 	},
 	email: {

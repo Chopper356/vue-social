@@ -3,7 +3,7 @@
 		<transition name="showcomments">
 			<Comments @created="addComment" v-show="$store.state.post_opened"></Comments>
 		</transition>
-		<Post v-for="(post, index) of posts" :key="index" :post="post"></Post>
+		<Post @delete-post="deletePost" v-for="(post, index) of posts" :key="index" :post="post"></Post>
 	</div>
 </template>
 
@@ -34,6 +34,10 @@ export default {
 					post.comments += 1;
 				}
 			}
+		},
+		deletePost(id) {
+			let idx = this.posts.findIndex(post => post._id == id);
+			this.posts.splice(idx, 1);
 		}
 	}
 }

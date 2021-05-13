@@ -8,11 +8,11 @@ const PostSchema = new mongoose.Schema({
 		ref: "user"
 	},
 	content: {
-		type: String,
-		required: true
+		type: String
 	},
 	images: [{
-		type: String
+		large: String,
+		medium: String
 	}],
 	date_create: {
 		type: Date,

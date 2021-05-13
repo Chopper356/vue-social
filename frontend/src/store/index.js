@@ -10,6 +10,7 @@ export default new Vuex.Store({
 		user: {},
 		post_opened: null,
 		image_opened: null,
+		post_deleted: null,
 		comments: [],
 		profile: {}
 	},
