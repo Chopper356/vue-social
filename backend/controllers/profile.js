@@ -18,8 +18,7 @@ module.exports = {
 	async getOpenProfile(req, res) {
 		try {
 			let user = await User.findOne({_id: req.params.id}, {password: 0});
-			let posts = await Post.find({user: req.params.id});
-			res.send({success: true, user, posts});
+			res.send({success: true, user});
 		}
 		catch(error) {
 			res.send({success: false, error: "Database error!"});

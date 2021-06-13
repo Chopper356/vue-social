@@ -9,7 +9,7 @@ const Users = require("./users");
 const Comment = require("./comment");
 
 router.use("/api/auth", Auth);
-router.use("/api/post", Post);
+router.use("/api/posts", Post);
 router.use("/api/profile", Profile);
 router.use("/api/users", Users);
 router.use("/api/comment", Comment);

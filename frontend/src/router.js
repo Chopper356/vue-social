@@ -7,6 +7,7 @@ import CreatePost from './views/CreatePost';
 import Profile from './views/Profile';
 import ProfileEdit from './views/ProfileEdit';
 import Users from './views/Users';
+import Post from "./views/Post";
 
 Vue.use(VueRouter)
 
@@ -40,6 +41,11 @@ const routes = [
 		path: '/users',
 		name: 'Users',
 		component: Users
+	},
+	{
+		path: '/posts/:id',
+		name: 'Post',
+		component: Post
 	},
 	{
 		path: '/404',

@@ -3,11 +3,13 @@ const Comment = require("../models/comment");
 const imgbbUploader = require("imgbb-uploader");
 const config = require('../config/dev.json');
 const sharp = require('sharp');
+const htmlspecialchars = require('htmlspecialchars');
 
 module.exports = {
 	async create(req, res) {
 		try {
-			let content = req.body.text.replace(/\n{2,}/gi, "<br><br>");
+			let content = htmlspecialchars(req.body.text);
+				content = content.replace(/\n{2,}/gi, "<br><br>");
 				content = content.replace(/\n/gi, "<br>");
 
 			let create_post = {
@@ -23,7 +25,6 @@ module.exports = {
 				}
 
 				let image = await imgbbUploader(options);
-
 
 				create_post.images = [{
 					large:  image.image.url,
@@ -69,7 +70,7 @@ module.exports = {
 
 	async getAll(req, res) {
 		try {
-			let posts = await Post.find({}).populate("user").populate("likes", "name avatar _id").sort({date_create: -1}).lean();
+			let posts = await Post.find({}).populate("user").limit(10).populate("likes", "name avatar _id").sort({date_create: -1}).lean();
 			for(let post of posts) {
 				post.comments = await Comment.countDocuments({post: post._id});
 			}
@@ -81,16 +82,49 @@ module.exports = {
 		}
 	},
 
-	async getUserPosts(req, res) {
+	async getPostsByPage(req, res) {
 		try {
-			if (!req.params.id) return res.send({success: false, error: "Post loading error!"});
+			let skip_num = (req.params.page - 1) * 10;
+			let user_id = req.params.id;
+			let find = (user_id != "all") ? {user: user_id} : {};
+			let posts = await Post.find(find).populate("user").skip(skip_num).limit(10).populate("likes", "name avatar _id").sort({date_create: -1}).lean();
 
-			let posts = await Post.find({user: req.params.id}).populate("user").populate("likes", "name avatar _id").sort({date_create: -1}).lean();
 			for(let post of posts) {
 				post.comments = await Comment.countDocuments({post: post._id});
 			}
 
 			res.send({success: true, posts});
+		}
+		catch(err) {
+			console.log(err)
+			res.send({success: false, error: "Post loading error!"});
+		}
+	},	
+
+	// async getUserPosts(req, res) {
+	// 	try {
+	// 		if (!req.params.id) return res.send({success: false, error: "Post loading error!"});
+
+	// 		let posts = await Post.find({user: req.params.id}).limit(10).populate("user").populate("likes", "name avatar _id").sort({date_create: -1}).lean();
+	// 		for(let post of posts) {
+	// 			post.comments = await Comment.countDocuments({post: post._id});
+	// 		}
+
+	// 		res.send({success: true, posts});
+	// 	}
+	// 	catch(err) {
+	// 		res.send({success: false, error: "Post loading error!"});
+	// 	}
+	// },
+
+	async getPostPage(req, res) {
+		try {
+			if (!req.params.id) return res.send({success: false, error: "Post loading error!"});
+
+			let post = await Post.findOne({_id: req.params.id}).populate("user").populate("likes", "name avatar _id").sort({date_create: -1}).lean();
+			post.comments = await Comment.countDocuments({post: post._id});
+
+			res.send({success: true, post});
 		}
 		catch(err) {
 			res.send({success: false, error: "Post loading error!"});

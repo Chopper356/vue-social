@@ -1,20 +1,25 @@
 <template>
-	<div class="post-component">
+	<div class="post-component" v-if="post.user">
 		<img class="avatar" :src="post.user.avatar">
 
 		<div class="content">
 			<div class="header">
 				<router-link :to="/profile/ + post.user._id" class="user">{{ post.user.name }}</router-link>
-				<div class="time">{{ post.date_create | moment("DD.MM.YYYY — HH:mm") }}</div>
+				<router-link :to="'/posts/' + post._id" class="time">{{ post.date_create | moment("DD.MM.YYYY — HH:mm") }}</router-link>
 
-				<i class="far fa-ellipsis-h" @click="options = !options" v-if="is_creator"></i>
+				<i class="far fa-ellipsis-h" @click="options = !options"></i>
 
-				<div class="options" v-if="is_creator && options">
-					<div class="text" @click="replaceTextareaContent();">
-						<i class="fal fa-pencil-alt bg-change"></i> Edit
-					</div>
+				<div class="options" v-if="options">
+					
+					<template v-if="is_creator">
+						<div class="text" @click="replaceTextareaContent();">
+							<i class="fal fa-pencil-alt bg-change"></i> Edit
+						</div>
 
-					<div class="text" @click="deletePost(post._id)"><i class="fal fa-trash-alt"></i> Delete</div>
+						<div class="text" @click="deletePost(post._id)"><i class="fal fa-trash-alt"></i> Delete</div>
+					</template>
+
+					<div class="text"><router-link :to="'/posts/' + post._id"><i class="far fa-share-square"></i> Share</router-link></div>
 				</div>
 			</div>
 
@@ -29,10 +34,12 @@
 						{{ post.likes.length }}<span class="text">Likes</span>
 					</span>
 
-					<i class="far fa-comment" @click="showComments(post)"></i> 
-					<span @click="showComments(post)">
-						{{ post.comments || 0 }} <span class="text right-text">Reply</span>
-					</span>
+					<template v-if="comments">
+						<i class="far fa-comment" @click="showComments(post)"></i> 
+						<span @click="showComments(post)">
+							{{ post.comments || 0 }} <span class="text right-text">Reply</span>
+						</span>
+					</template>
 				</div>
 
 				<div class="right">
@@ -67,6 +74,10 @@ export default {
 		footer: {
 			type: Boolean,
 			default: true
+		},
+		comments: {
+			type: Boolean,
+			default: true
 		}
 	},
 
@@ -80,10 +91,7 @@ export default {
 	}),
 
 	created() {
-		if (this.footer) {
-			this.likesCheck();
-		}
-		this.editText = this.post.content;
+		this.likesCheck();	
 	},
 
 	computed: {
@@ -95,7 +103,7 @@ export default {
 	methods: {
 		deletePost(id) {
 			if (confirm("Delete this post?")) {
-				this.axios.post(`/post/${id}/delete`).then(({data}) => {
+				this.axios.post(`/posts/${id}/delete`).then(({data}) => {
 					if (data.success) {
 						this.$emit("delete-post", id);
 						this.options = false;
@@ -140,7 +148,7 @@ export default {
 		},
 
 		showLikes(id) {
-			this.axios.get(`/post/${id}/likes`).then(({data}) => {
+			this.axios.get(`/posts/${id}/likes`).then(({data}) => {
 				if (data.success) {
 					this.show_likes = !this.show_likes
 					this.likes = data.post[0].likes;
@@ -153,7 +161,7 @@ export default {
 		},
 
 		addLike(post) {
-			this.axios.post("/post/like", {id: post._id, liked: !this.liked}).then(({data}) => {
+			this.axios.post("/posts/like", {id: post._id, liked: !this.liked}).then(({data}) => {
 				if (data.success) {
 					this.liked = !this.liked;
 
@@ -410,6 +418,7 @@ export default {
 				top: -50px;
 				left: 35px;
 				z-index: 90;
+				padding: 10px 0px;
 
 				&::-webkit-scrollbar-track {
 					border-radius: 10px;
@@ -425,7 +434,7 @@ export default {
 				}
 
 				i {
-					position: sticky;
+					position: absolute;
 					left: 90%;
 					top: 10px;
 				}

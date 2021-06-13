@@ -7,7 +7,7 @@
 		</transition>
 
 		<template v-if="checkStorage">
-			<router-view/>
+			<router-view :key="$route.path"/>
 		</template>
 	</div>
 </template>

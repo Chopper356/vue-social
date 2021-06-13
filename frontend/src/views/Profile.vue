@@ -28,9 +28,7 @@
 
 		<div class="profile-title">Posts:</div>
 
-		<Posts v-if="posts.length" :userid="$route.params.id"></Posts>
-
-		<div v-else class="empty-posts">This user has not yet published any posts.</div>
+		<Posts :userid="$route.params.id"></Posts>
 
 	</div>	
 </template>
@@ -43,7 +41,6 @@ export default {
 	data: () => ({
 		is_friend: false,
 		profile: {},
-		posts: []
 	}),
 	mounted() {
 		this.routeProfile();
@@ -56,7 +53,6 @@ export default {
 				if (data.success) {
 					data.user.is_friend = false;
 					this.profile = data.user;
-					this.$set(this.posts, 0, data.posts);
 					this.checkFriends();
 					
 					if (data.user._id != user_id) {
@@ -99,7 +95,6 @@ export default {
 		$route(to, from) {
 			if (to.params.id != from.params.id) {
 				this.routeProfile();
-				console.log("qweqweqw")
 			}
 		}
 	}

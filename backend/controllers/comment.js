@@ -1,10 +1,12 @@
 const Comment = require("../models/comment");
+const htmlspecialchars = require('htmlspecialchars');
 
 module.exports = {
 	async create(req, res) {
 		try {
-			let content = req.body.text.replace(/\n{2,}/gi, "<br><br>");
-				content = content.replace(/\n/, "<br>");
+			let content = htmlspecialchars(req.body.text);
+				content = content.replace(/\n{2,}/gi, "<br><br>");
+				content = content.replace(/\n/gi, "<br>");
 
 			let comment = await Comment.create({
 				user: req.user,

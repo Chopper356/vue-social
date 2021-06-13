@@ -1,7 +1,7 @@
 <template>
-	<div class="bg-comments" @click.self="$store.state.post_opened = null">
+	<div class="bg-comments" :class="{'bg-popup': popup}" @click.self="$store.state.post_opened = null">
 		<div class="comments">
-			<div class="top">
+			<div class="top" v-if="popup">
 				<div class="title">Comments</div>
 				<i class="far fa-times" @click="$store.state.post_opened = null"></i>
 			</div>
@@ -34,6 +34,13 @@
 
 <script>
 export default {
+	props: {
+		popup: {
+			type: Boolean,
+			default: true
+		}
+	},
+	
 	data: () => ({
 		text: "",
 		comments: []
@@ -65,6 +72,10 @@ export default {
 			})
 		}
 	},
+	beforeDestroy() {
+		console.log(3)
+		this.$store.state.post_opened = null;
+	},
 
 	watch: {
 		"$store.state.post_opened"(newVal) {
@@ -77,20 +88,30 @@ export default {
 </script>
 
 <style lang="scss">
-	.bg-comments {
-			position: fixed;
-			top: 0px;
-			left: 0px;
-			width: 100%;
-			height: 100vh;
-			background-color: rgba(0, 0, 0, 0.5);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 500;
-			overflow: hidden;
-			transition: all 0.5s;
+	.bg-popup {
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		width: 100% !important;
+		height: 100vh;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 500;
+		overflow: hidden;
+		transition: all 0.5s;
 
+		.comments {
+			width: 800px;
+		}
+	}
+
+	.bg-comments {
+		border-radius: 15px;
+		box-shadow: 0px 10px 50px rgba(51, 152, 219, 0.2);
+		margin: auto;
+		width: 700px;
 
 		.list {
 			max-height: 70vh;
@@ -127,7 +148,6 @@ export default {
 			padding: 25px;
 			border-radius: 10px;
 			border: 1pc solid 1px rgba(0, 0, 0, 0.1);
-			width: 800px;
 			overflow: hidden;
 
 			.top {
