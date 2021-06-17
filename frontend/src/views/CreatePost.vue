@@ -96,7 +96,7 @@ export default {
 
 
 			this.upload = true;
-			this.axios.post("/post/create", formData, { headers: {
+			this.axios.post("/posts/create", formData, { headers: {
 				'Content-Type': 'multipart/form-data'
 			}}).then(({data}) => {
 				this.upload = false;

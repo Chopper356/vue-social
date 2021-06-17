@@ -124,7 +124,7 @@ export default {
 		},
 
 		editPost(id) {
-			this.axios.post(`/post/${id}/edit`, {text: this.post.content}).then(({data}) => {
+			this.axios.post(`/posts/${id}/edit`, {text: this.post.content}).then(({data}) => {
 				if (data.success) {
 					this.edit = false;
 					this.post.content = data.content;
